@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品削除確認 - 管理者画面</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <a href="/admin" class="site-title">管理者画面</a>
+            <nav class="nav-links">
+                <a href="/admin/products">商品管理</a>
+                <a href="/admin/orders">注文管理</a>
+                <a href="/admin/customers">顧客管理</a>
+                <a href="/">フロント画面</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title">商品削除確認</h1>
+                </div>
+                
+                <div class="alert alert-danger">
+                    <h3>以下の商品を削除しますか？</h3>
+                    <p>この操作は取り消すことができません。</p>
+                </div>
+                
+                <!-- 商品情報 -->
+                <div style="margin-bottom: 2rem;">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>商品ID</th>
+                                <td th:text="${productForm.id}">-</td>
+                            </tr>
+                            <tr>
+                                <th>商品名</th>
+                                <td th:text="${productForm.name}">-</td>
+                            </tr>
+                            <tr>
+                                <th>商品説明</th>
+                                <td th:text="${productForm.description != null and !productForm.description.empty ? productForm.description : '-'}">-</td>
+                            </tr>
+                            <tr>
+                                <th>価格</th>
+                                <td th:text="'¥' + ${#numbers.formatDecimal(productForm.price ?: 0, 0, 'COMMA', 0, 'POINT')}">-</td>
+                            </tr>
+                            <tr>
+                                <th>カテゴリ</th>
+                                <td th:text="${productForm.category != null and !productForm.category.empty ? productForm.category : '-'}">-</td>
+                            </tr>
+                            <tr>
+                                <th>在庫数</th>
+                                <td th:text="${productForm.stockQuantity}">-</td>
+                            </tr>
+                            <tr>
+                                <th>画像パス</th>
+                                <td th:text="${productForm.imagePath != null and !productForm.imagePath.empty ? productForm.imagePath : '-'}">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- アクションボタン -->
+                <div style="text-align: center;">
+                    <a href="/admin/products" class="btn btn-secondary">キャンセル</a>
+                    <form th:action="@{/admin/products/{id}/delete(id=${productForm.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">削除する</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 オンラインショップ. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

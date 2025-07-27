@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者ダッシュボード - 管理者画面</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <a href="/admin" class="site-title">管理者画面</a>
+            <nav class="nav-links">
+                <a href="/admin/products">商品管理</a>
+                <a href="/admin/orders">注文管理</a>
+                <a href="/admin/customers">顧客管理</a>
+                <a href="/">フロント画面</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <div class="container">
+            <h1 style="margin-bottom: 2rem;">管理者ダッシュボード</h1>
+            
+            <!-- 統計情報 -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">今日の統計</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding: 1rem;">
+                    <div class="stat-card">
+                        <h3>今日の注文数</h3>
+                        <p class="stat-number" th:text="${orderStatistics.TODAY_COUNT}">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>保留中</h3>
+                        <p class="stat-number" th:text="${orderStatistics.PENDING_COUNT}">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>準備中</h3>
+                        <p class="stat-number" th:text="${orderStatistics.PREPARING_COUNT}">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>発送済み</h3>
+                        <p class="stat-number" th:text="${orderStatistics.SHIPPED_COUNT}">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 在庫不足商品 -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">在庫不足商品（10個以下）</h2>
+                    <div style="margin-top: 1rem;">
+                        <a href="/admin/products/low-stock" class="btn btn-warning">詳細を見る</a>
+                    </div>
+                </div>
+                <div th:if="${!lowStockProducts.empty}">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>商品ID</th>
+                                <th>商品名</th>
+                                <th>カテゴリ</th>
+                                <th>在庫数</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="product : ${lowStockProducts}">
+                                <td th:text="${product.id}">商品ID</td>
+                                <td th:text="${product.name}">商品名</td>
+                                <td th:text="${product.category}">カテゴリ</td>
+                                <td>
+                                    <span th:text="${product.stockQuantity}" 
+                                          style="color: red; font-weight: bold;">在庫数</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/products/{id}/edit(id=${product.id})}" 
+                                       class="btn btn-primary btn-sm">編集</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${lowStockProducts.empty}" class="alert alert-info">
+                    <p>在庫不足の商品はありません。</p>
+                </div>
+            </div>
+            
+            <!-- クイックアクション -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">クイックアクション</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; padding: 1rem;">
+                    <div class="quick-action">
+                        <h3>商品管理</h3>
+                        <p>商品の登録・編集・削除を行います</p>
+                        <a href="/admin/products" class="btn btn-primary">商品管理へ</a>
+                    </div>
+                    <div class="quick-action">
+                        <h3>注文管理</h3>
+                        <p>注文の確認・ステータス更新を行います</p>
+                        <a href="/admin/orders" class="btn btn-primary">注文管理へ</a>
+                    </div>
+                    <div class="quick-action">
+                        <h3>顧客管理</h3>
+                        <p>顧客情報の登録・編集・削除を行います</p>
+                        <a href="/admin/customers" class="btn btn-primary">顧客管理へ</a>
+                    </div>
+                    <div class="quick-action">
+                        <h3>フロント画面</h3>
+                        <p>ユーザー向け画面を確認します</p>
+                        <a href="/" class="btn btn-secondary">フロント画面へ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 オンラインショップ. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

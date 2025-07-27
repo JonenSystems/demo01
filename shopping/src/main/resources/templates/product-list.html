@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品一覧 - オンラインショップ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="site-title">オンラインショップ</a>
+            <nav class="nav-links">
+                <a href="/">商品一覧</a>
+                <a href="/cart">カート <span th:if="${cartItemCount > 0}" th:text="'(' + ${cartItemCount} + ')'">(0)</span></a>
+                <a href="/admin">管理者画面</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <div class="container">
+            <!-- カテゴリフィルター -->
+            <div class="category-filter" th:if="${productListForm.categories != null and !productListForm.categories.empty}">
+                <div class="category-buttons">
+                    <a href="/" class="category-btn" th:classappend="${productListForm.selectedCategory == null ? 'active' : ''}">全商品</a>
+                    <a th:each="category : ${productListForm.categories}" 
+                       th:href="@{/products(category=${category})}" 
+                       th:text="${category}"
+                       class="category-btn"
+                       th:classappend="${productListForm.selectedCategory == category ? 'active' : ''}"></a>
+                </div>
+            </div>
+
+            <!-- 商品一覧 -->
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title" th:text="${productListForm.selectedCategory != null ? productListForm.selectedCategory + 'の商品' : '商品一覧'}">商品一覧</h1>
+                </div>
+                
+                <div th:if="${productListForm.hasProducts()}">
+                    <div class="product-grid">
+                        <div th:each="product : ${productListForm.products}" class="product-card">
+                            <img th:if="${product.imagePath != null and !product.imagePath.empty}" 
+                                 th:src="${product.imagePath}" 
+                                 th:alt="${product.name}" 
+                                 class="product-image">
+                            <div th:unless="${product.imagePath != null and !product.imagePath.empty}" 
+                                 class="product-image" 
+                                 style="display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                 No Image
+                            </div>
+                            
+                            <div class="product-info">
+                                <div class="product-category" th:text="${product.category}">カテゴリ</div>
+                                <h3 class="product-name" th:text="${product.name}">商品名</h3>
+                                <p class="product-description" th:text="${product.description}">商品説明</p>
+                                <div class="product-price" th:text="'¥' + ${#numbers.formatDecimal(product.price ?: 0, 0, 'COMMA', 0, 'POINT')}">価格</div>
+                                
+                                <form th:action="@{/cart/add}" method="post" class="add-to-cart-form">
+                                    <input type="hidden" name="productId" th:value="${product.id}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-success add-to-cart-btn" 
+                                            th:attr="data-product-id=${product.id}, data-product-name=${product.name}">
+                                        追加
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div th:unless="${productListForm.hasProducts()}" class="alert alert-warning">
+                    <p>商品が見つかりませんでした。</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 オンラインショップ. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- トースト通知 -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <!-- JavaScript -->
+    <script>
+        // カート追加機能（Ajax + トースト通知）
+        document.addEventListener('DOMContentLoaded', function() {
+            const addToCartForms = document.querySelectorAll('.add-to-cart-form');
+            
+            addToCartForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const productId = formData.get('productId');
+                    const quantity = formData.get('quantity');
+                    const button = form.querySelector('.add-to-cart-btn');
+                    const originalText = button.textContent;
+                    
+                    // ボタンを無効化
+                    button.disabled = true;
+                    button.textContent = '追加中...';
+                    button.classList.add('loading');
+                    
+                    // Ajax送信
+                    fetch('/cart/add', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast('カートに追加しました', 'success');
+                        } else {
+                            showToast('追加に失敗しました', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('追加に失敗しました', 'error');
+                    })
+                    .finally(() => {
+                        // ボタンを元に戻す
+                        button.disabled = false;
+                        button.textContent = originalText;
+                        button.classList.remove('loading');
+                    });
+                });
+            });
+        });
+        
+        // トースト通知表示
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast toast-${type}`;
+            toast.style.display = 'block';
+            
+            // 3秒後に自動で消える
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 

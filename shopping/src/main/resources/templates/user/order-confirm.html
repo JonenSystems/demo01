@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文確認 - オンラインショップ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="site-title">オンラインショップ</a>
+            <nav class="nav-links">
+                <a href="/">商品一覧</a>
+                <a href="/cart">カート <span th:if="${cartItemCount > 0}" th:text="'(' + ${cartItemCount} + ')'">(0)</span></a>
+                <a href="/admin">管理者画面</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title">注文確認</h1>
+                </div>
+                
+                <div class="card-body">
+                    <!-- 顧客情報が未入力の場合 -->
+                    <div th:unless="${orderConfirmForm.hasCustomerInfo()}" class="alert alert-warning">
+                        <p>お客様情報が入力されていません。</p>
+                        <a href="/order/customer-input" class="btn btn-primary">お客様情報を入力する</a>
+                    </div>
+                    
+                    <!-- 注文内容 -->
+                    <div th:if="${orderConfirmForm.hasCartItems()}">
+                        <!-- 注文商品一覧 -->
+                        <h3>注文商品</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>商品画像</th>
+                                    <th>商品名</th>
+                                    <th>単価</th>
+                                    <th>数量</th>
+                                    <th>小計</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${orderConfirmForm.cartItems}">
+                                    <td>
+                                        <img th:if="${item.productImagePath != null and !item.productImagePath.empty}" 
+                                             th:src="${item.productImagePath}" 
+                                             th:alt="${item.productName}" 
+                                             style="width: 60px; height: 60px; object-fit: cover;">
+                                        <div th:unless="${item.productImagePath != null and !item.productImagePath.empty}" 
+                                             style="width: 60px; height: 60px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 0.7rem;">
+                                            No Image
+                                        </div>
+                                    </td>
+                                    <td th:text="${item.productName}">商品名</td>
+                                    <td th:text="'¥' + ${#numbers.formatDecimal(item.unitPrice ?: 0, 0, 'COMMA', 0, 'POINT')}">単価</td>
+                                    <td th:text="${item.quantity}">数量</td>
+                                    <td th:text="'¥' + ${#numbers.formatDecimal(item.subtotal ?: 0, 0, 'COMMA', 0, 'POINT')}">小計</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <!-- 合計金額 -->
+                        <div style="text-align: right; margin: 2rem 0;">
+                            <h3>合計金額: <span th:text="'¥' + ${#numbers.formatDecimal(orderConfirmForm.totalAmount ?: 0, 0, 'COMMA', 0, 'POINT')}">¥0</span></h3>
+                        </div>
+                        
+                        <!-- お客様情報 -->
+                        <div th:if="${orderConfirmForm.hasCustomerInfo()}">
+                            <h3>お客様情報</h3>
+                            <div class="customer-info">
+                                <p><strong>お名前:</strong> <span th:text="${orderConfirmForm.customer.name}">お名前</span></p>
+                                <p><strong>メールアドレス:</strong> <span th:text="${orderConfirmForm.customer.email}">メールアドレス</span></p>
+                                <p th:if="${orderConfirmForm.customer.phone != null and !orderConfirmForm.customer.phone.empty}">
+                                    <strong>電話番号:</strong> <span th:text="${orderConfirmForm.customer.phone}">電話番号</span>
+                                </p>
+                                <p th:if="${orderConfirmForm.customer.address != null and !orderConfirmForm.customer.address.empty}">
+                                    <strong>住所:</strong> <span th:text="${orderConfirmForm.customer.address}">住所</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- 注文番号 -->
+                        <div style="margin: 2rem 0;">
+                            <p><strong>注文番号:</strong> <span th:text="${orderConfirmForm.orderNumber}">注文番号</span></p>
+                        </div>
+                        
+                        <!-- アクションボタン -->
+                        <div class="form-actions">
+                            <a href="/cart" class="btn btn-secondary">カートに戻る</a>
+                            <a th:if="${!orderConfirmForm.hasCustomerInfo()}" href="/order/customer-input" class="btn btn-primary">お客様情報を入力する</a>
+                            <form th:if="${orderConfirmForm.hasCustomerInfo()}" th:action="@{/order/confirm}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-success" 
+                                        onclick="return confirm('この内容で注文を確定しますか？')">注文を確定する</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- カートが空の場合 -->
+                    <div th:unless="${orderConfirmForm.hasCartItems()}" class="alert alert-info">
+                        <p>カートに商品がありません。</p>
+                        <a href="/" class="btn btn-primary">商品一覧を見る</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 オンラインショップ. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

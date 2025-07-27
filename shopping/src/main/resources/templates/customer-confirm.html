@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顧客情報確認 - オンラインショップ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="site-title">オンラインショップ</a>
+            <nav class="nav-links">
+                <a href="/">商品一覧</a>
+                <a href="/cart">カート</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title">顧客情報確認</h1>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h3>以下の内容でよろしいですか？</h3>
+                </div>
+                
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>お名前</th>
+                            <td th:text="${customerForm.name}">-</td>
+                        </tr>
+                        <tr>
+                            <th>メールアドレス</th>
+                            <td th:text="${customerForm.email}">-</td>
+                        </tr>
+                        <tr>
+                            <th>電話番号</th>
+                            <td th:text="${customerForm.phone != null and !customerForm.phone.empty ? customerForm.phone : '-'}">-</td>
+                        </tr>
+                        <tr>
+                            <th>住所</th>
+                            <td th:text="${customerForm.address != null and !customerForm.address.empty ? customerForm.address : '-'}">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <form th:action="@{/customer/back}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-secondary">戻る</button>
+                    </form>
+                    <a href="/order/confirm" class="btn btn-primary">注文確認画面へ</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 オンラインショップ. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文完了 - オンラインショップ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="site-title">オンラインショップ</a>
+            <nav class="nav-links">
+                <a href="/">商品一覧</a>
+                <a href="/cart">カート</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title">注文完了</h1>
+                </div>
+                
+                <div class="alert alert-success">
+                    <h3>ご注文ありがとうございました！</h3>
+                    <p>注文番号: <strong th:text="${orderForm.orderNumber}">-</strong></p>
+                </div>
+                
+                <!-- 注文内容 -->
+                <div style="margin-bottom: 2rem;">
+                    <h3>注文内容</h3>
+                    
+                    <!-- 注文商品 -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>商品画像</th>
+                                <th>商品名</th>
+                                <th>単価</th>
+                                <th>数量</th>
+                                <th>小計</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${orderForm.orderItems}">
+                                <td>
+                                    <img th:if="${item.productImagePath != null and !item.productImagePath.empty}" 
+                                         th:src="${item.productImagePath}" 
+                                         th:alt="${item.productName}" 
+                                         style="width: 60px; height: 60px; object-fit: cover;">
+                                    <div th:unless="${item.productImagePath != null and !item.productImagePath.empty}" 
+                                         style="width: 60px; height: 60px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;">
+                                        No Image
+                                    </div>
+                                </td>
+                                <td th:text="${item.productName}">商品名</td>
+                                <td th:text="'¥' + ${#numbers.formatDecimal(item.unitPrice ?: 0, 0, 'COMMA', 0, 'POINT')}">単価</td>
+                                <td th:text="${item.quantity}">数量</td>
+                                <td th:text="'¥' + ${#numbers.formatDecimal(item.subtotal ?: 0, 0, 'COMMA', 0, 'POINT')}">小計</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- 合計金額 -->
+                    <div style="text-align: right; margin-top: 1rem;">
+                        <h3>合計金額: <span th:text="'¥' + ${#numbers.formatDecimal(orderForm.totalAmount ?: 0, 0, 'COMMA', 0, 'POINT')}">¥0</span></h3>
+                    </div>
+                </div>
+                
+                <!-- お客様情報 -->
+                <div style="margin-bottom: 2rem;">
+                    <h3>お客様情報</h3>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>お名前</th>
+                                <td th:text="${orderForm.customer.name}">-</td>
+                            </tr>
+                            <tr>
+                                <th>メールアドレス</th>
+                                <td th:text="${orderForm.customer.email}">-</td>
+                            </tr>
+                            <tr>
+                                <th>電話番号</th>
+                                <td th:text="${orderForm.customer.phone != null and !orderForm.customer.phone.empty ? orderForm.customer.phone : '-'}">-</td>
+                            </tr>
+                            <tr>
+                                <th>住所</th>
+                                <td th:text="${orderForm.customer.address != null and !orderForm.customer.address.empty ? orderForm.customer.address : '-'}">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 注意事項 -->
+                <div class="alert alert-warning">
+                    <h4>ご注意</h4>
+                    <ul>
+                        <li>注文確認メールをお送りいたします。</li>
+                        <li>商品の発送状況は注文番号でお問い合わせください。</li>
+                        <li>ご不明な点がございましたら、お気軽にお問い合わせください。</li>
+                    </ul>
+                </div>
+                
+                <!-- アクションボタン -->
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="/" class="btn btn-primary">商品一覧に戻る</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 オンラインショップ. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 
