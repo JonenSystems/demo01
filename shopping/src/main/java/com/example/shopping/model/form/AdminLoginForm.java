@@ -39,7 +39,9 @@ public class AdminLoginForm {
      */
     public static AdminLoginForm fromDto(AdminUserDto dto) {
         AdminLoginForm form = new AdminLoginForm();
-        form.setUsername(dto.getUsername());
+        if (dto != null) {
+            form.setUsername(dto.getUsername());
+        }
         // セキュリティのため、パスワードは設定しない
         return form;
     }
