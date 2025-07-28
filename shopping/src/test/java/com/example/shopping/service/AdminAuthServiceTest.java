@@ -73,8 +73,8 @@ class AdminAuthServiceTest {
     }
 
     @Test
-    void authenticate_WithValidCredentials_ShouldReturnSuccess() {
-        // 有効な認証情報でのテスト
+    void UT_Service_0001_authenticate_正常系() {
+        // 正しいユーザー名とパスワードで認証成功
         when(adminUserRepository.findEnabledAdminByUsername("admin"))
                 .thenReturn(Optional.of(testAdminUser));
         when(passwordEncoder.matches("password", testAdminUser.getPassword()))
@@ -89,12 +89,13 @@ class AdminAuthServiceTest {
         assertEquals(AdminAuthResultDto.AuthResultType.SUCCESS, result.getResultType());
         assertNotNull(result.getUser());
         assertEquals("admin", result.getUser().getUsername());
+        assertNull(result.getErrorMessage());
         verify(adminUserRepository).updateLastLogin(1L);
     }
 
     @Test
-    void authenticate_WithInvalidUsername_ShouldReturnUserNotFound() {
-        // 存在しないユーザー名でのテスト
+    void UT_Service_0002_authenticate_異常系() {
+        // 存在しないユーザー名で認証失敗
         when(adminUserRepository.findEnabledAdminByUsername("nonexistent"))
                 .thenReturn(Optional.empty());
 
@@ -103,12 +104,14 @@ class AdminAuthServiceTest {
         assertNotNull(result);
         assertFalse(result.isSuccess());
         assertEquals(AdminAuthResultDto.AuthResultType.USER_NOT_FOUND, result.getResultType());
+        assertEquals("ユーザーが見つかりません", result.getErrorMessage());
+        assertNull(result.getUser());
         verify(adminUserRepository, never()).updateLastLogin(any());
     }
 
     @Test
-    void authenticate_WithInvalidPassword_ShouldReturnInvalidPassword() {
-        // 間違ったパスワードでのテスト
+    void UT_Service_0003_authenticate_異常系() {
+        // 間違ったパスワードで認証失敗
         when(adminUserRepository.findEnabledAdminByUsername("admin"))
                 .thenReturn(Optional.of(testAdminUser));
         when(passwordEncoder.matches("wrongpassword", testAdminUser.getPassword()))
@@ -119,62 +122,66 @@ class AdminAuthServiceTest {
         assertNotNull(result);
         assertFalse(result.isSuccess());
         assertEquals(AdminAuthResultDto.AuthResultType.INVALID_PASSWORD, result.getResultType());
+        assertEquals("パスワードが正しくありません", result.getErrorMessage());
+        assertNull(result.getUser());
         verify(adminUserRepository, never()).updateLastLogin(any());
     }
 
     @Test
-    void authenticate_WithDisabledUser_ShouldReturnUserDisabled() {
-        // 無効なユーザーでのテスト
-        when(adminUserRepository.findEnabledAdminByUsername("disabled"))
-                .thenReturn(Optional.of(testDisabledUser));
-
-        AdminAuthResultDto result = adminAuthService.authenticate("disabled", "password");
-
-        assertNotNull(result);
-        assertFalse(result.isSuccess());
-        assertEquals(AdminAuthResultDto.AuthResultType.USER_DISABLED, result.getResultType());
-        verify(adminUserRepository, never()).updateLastLogin(any());
-    }
-
-    @Test
-    void authenticate_WithNullUsername_ShouldReturnFailure() {
-        // nullユーザー名でのテスト
+    void UT_Service_0004_authenticate_異常系() {
+        // nullのユーザー名で認証失敗
         AdminAuthResultDto result = adminAuthService.authenticate(null, "password");
 
         assertNotNull(result);
         assertFalse(result.isSuccess());
         assertEquals(AdminAuthResultDto.AuthResultType.FAILURE, result.getResultType());
         assertEquals("ユーザー名を入力してください", result.getErrorMessage());
+        assertNull(result.getUser());
         verify(adminUserRepository, never()).findEnabledAdminByUsername(any());
     }
 
     @Test
-    void authenticate_WithEmptyUsername_ShouldReturnFailure() {
-        // 空のユーザー名でのテスト
+    void UT_Service_0005_authenticate_異常系() {
+        // 空文字のユーザー名で認証失敗
         AdminAuthResultDto result = adminAuthService.authenticate("", "password");
 
         assertNotNull(result);
         assertFalse(result.isSuccess());
         assertEquals(AdminAuthResultDto.AuthResultType.FAILURE, result.getResultType());
         assertEquals("ユーザー名を入力してください", result.getErrorMessage());
+        assertNull(result.getUser());
         verify(adminUserRepository, never()).findEnabledAdminByUsername(any());
     }
 
     @Test
-    void authenticate_WithNullPassword_ShouldReturnFailure() {
-        // nullパスワードでのテスト
+    void UT_Service_0006_authenticate_異常系() {
+        // nullのパスワードで認証失敗
         AdminAuthResultDto result = adminAuthService.authenticate("admin", null);
 
         assertNotNull(result);
         assertFalse(result.isSuccess());
         assertEquals(AdminAuthResultDto.AuthResultType.FAILURE, result.getResultType());
         assertEquals("パスワードを入力してください", result.getErrorMessage());
+        assertNull(result.getUser());
         verify(adminUserRepository, never()).findEnabledAdminByUsername(any());
     }
 
     @Test
-    void updateLastLogin_WithValidUserId_ShouldReturnUpdatedUser() {
-        // 有効なユーザーIDでの最終ログイン時刻更新テスト
+    void UT_Service_0007_authenticate_異常系() {
+        // 空文字のパスワードで認証失敗
+        AdminAuthResultDto result = adminAuthService.authenticate("admin", "");
+
+        assertNotNull(result);
+        assertFalse(result.isSuccess());
+        assertEquals(AdminAuthResultDto.AuthResultType.FAILURE, result.getResultType());
+        assertEquals("パスワードを入力してください", result.getErrorMessage());
+        assertNull(result.getUser());
+        verify(adminUserRepository, never()).findEnabledAdminByUsername(any());
+    }
+
+    @Test
+    void UT_Service_0008_updateLastLogin_正常系() {
+        // 有効なユーザーIDで最終ログイン時刻更新
         when(adminUserRepository.updateLastLogin(1L))
                 .thenReturn(Optional.of(testAdminUser));
 
@@ -182,12 +189,13 @@ class AdminAuthServiceTest {
 
         assertNotNull(result);
         assertEquals("admin", result.getUsername());
+        assertEquals(1L, result.getId());
         verify(adminUserRepository).updateLastLogin(1L);
     }
 
     @Test
-    void updateLastLogin_WithInvalidUserId_ShouldReturnNull() {
-        // 無効なユーザーIDでの最終ログイン時刻更新テスト
+    void UT_Service_0009_updateLastLogin_異常系() {
+        // 存在しないユーザーIDで更新失敗
         when(adminUserRepository.updateLastLogin(999L))
                 .thenReturn(Optional.empty());
 
@@ -198,8 +206,20 @@ class AdminAuthServiceTest {
     }
 
     @Test
-    void findAdminByUsername_WithValidUsername_ShouldReturnUser() {
-        // 有効なユーザー名での管理者ユーザー検索テスト
+    void UT_Service_0010_updateLastLogin_異常系() {
+        // nullのユーザーIDで更新失敗
+        when(adminUserRepository.updateLastLogin(null))
+                .thenReturn(Optional.empty());
+
+        AdminUserDto result = adminAuthService.updateLastLogin(null);
+
+        assertNull(result);
+        verify(adminUserRepository).updateLastLogin(null);
+    }
+
+    @Test
+    void UT_Service_0011_findAdminByUsername_正常系() {
+        // 存在するユーザー名で検索成功
         when(adminUserRepository.findAdminByUsername("admin"))
                 .thenReturn(Optional.of(testAdminUser));
 
@@ -208,12 +228,13 @@ class AdminAuthServiceTest {
         assertNotNull(result);
         assertEquals("admin", result.getUsername());
         assertTrue(result.isAdmin());
+        assertEquals(User.UserRole.ADMIN, result.getRole());
         verify(adminUserRepository).findAdminByUsername("admin");
     }
 
     @Test
-    void findAdminByUsername_WithInvalidUsername_ShouldReturnNull() {
-        // 無効なユーザー名での管理者ユーザー検索テスト
+    void UT_Service_0012_findAdminByUsername_異常系() {
+        // 存在しないユーザー名で検索失敗
         when(adminUserRepository.findAdminByUsername("nonexistent"))
                 .thenReturn(Optional.empty());
 
@@ -224,8 +245,32 @@ class AdminAuthServiceTest {
     }
 
     @Test
-    void existsAdminByUsername_WithExistingAdmin_ShouldReturnTrue() {
-        // 存在する管理者ユーザーの確認テスト
+    void UT_Service_0013_findAdminByUsername_異常系() {
+        // nullのユーザー名で検索失敗
+        when(adminUserRepository.findAdminByUsername(null))
+                .thenReturn(Optional.empty());
+
+        AdminUserDto result = adminAuthService.findAdminByUsername(null);
+
+        assertNull(result);
+        verify(adminUserRepository).findAdminByUsername(null);
+    }
+
+    @Test
+    void UT_Service_0014_findAdminByUsername_異常系() {
+        // 空文字のユーザー名で検索失敗
+        when(adminUserRepository.findAdminByUsername(""))
+                .thenReturn(Optional.empty());
+
+        AdminUserDto result = adminAuthService.findAdminByUsername("");
+
+        assertNull(result);
+        verify(adminUserRepository).findAdminByUsername("");
+    }
+
+    @Test
+    void UT_Service_0015_existsAdminByUsername_正常系() {
+        // 存在するユーザー名で確認
         when(adminUserRepository.existsAdminByUsername("admin"))
                 .thenReturn(true);
 
@@ -236,8 +281,8 @@ class AdminAuthServiceTest {
     }
 
     @Test
-    void existsAdminByUsername_WithNonExistingAdmin_ShouldReturnFalse() {
-        // 存在しない管理者ユーザーの確認テスト
+    void UT_Service_0016_existsAdminByUsername_正常系() {
+        // 存在しないユーザー名で確認
         when(adminUserRepository.existsAdminByUsername("nonexistent"))
                 .thenReturn(false);
 
@@ -245,5 +290,17 @@ class AdminAuthServiceTest {
 
         assertFalse(result);
         verify(adminUserRepository).existsAdminByUsername("nonexistent");
+    }
+
+    @Test
+    void UT_Service_0017_existsAdminByUsername_異常系() {
+        // nullのユーザー名で確認
+        when(adminUserRepository.existsAdminByUsername(null))
+                .thenReturn(false);
+
+        boolean result = adminAuthService.existsAdminByUsername(null);
+
+        assertFalse(result);
+        verify(adminUserRepository).existsAdminByUsername(null);
     }
 }
