@@ -45,6 +45,12 @@ public class SessionCartImpl implements SessionCart {
                 SessionUtils.SessionKeys.CART_SESSION,
                 new ConcurrentHashMap<Long, UserCartItemDto>());
 
+        // cartMapがnullの場合のチェックを追加
+        if (cartMap == null) {
+            log.warn("Cart map is null for productId={}", productId);
+            return;
+        }
+
         UserCartItemDto existingItem = cartMap.get(productId);
         if (existingItem != null) {
             // 既存アイテムの数量を更新
@@ -74,6 +80,12 @@ public class SessionCartImpl implements SessionCart {
                 session,
                 SessionUtils.SessionKeys.CART_SESSION,
                 new ConcurrentHashMap<Long, UserCartItemDto>());
+
+        // cartMapがnullの場合のチェックを追加
+        if (cartMap == null) {
+            log.warn("Cart map is null for productId={}", productId);
+            return;
+        }
 
         UserCartItemDto removedItem = cartMap.remove(productId);
         if (removedItem != null) {
@@ -118,6 +130,12 @@ public class SessionCartImpl implements SessionCart {
                 session,
                 SessionUtils.SessionKeys.CART_SESSION,
                 new ConcurrentHashMap<Long, UserCartItemDto>());
+
+        // cartMapがnullの場合のチェックを追加
+        if (cartMap == null) {
+            log.warn("Cart map is null for productId={}", productId);
+            return;
+        }
 
         UserCartItemDto existingItem = cartMap.get(productId);
         if (existingItem != null) {
