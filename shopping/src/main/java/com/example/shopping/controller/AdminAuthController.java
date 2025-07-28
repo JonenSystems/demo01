@@ -6,6 +6,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 管理者認証コントローラー
@@ -48,5 +53,21 @@ public class AdminAuthController {
         model.addAttribute("loginForm", new AdminLoginForm());
 
         return "admin/login";
+    }
+
+    /**
+     * ログアウト処理を実行する
+     * 
+     * @param request  HttpServletRequest
+     * @param response HttpServletResponse
+     * @return ログイン画面へのリダイレクト
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return "redirect:/admin/login?logout=true";
     }
 }

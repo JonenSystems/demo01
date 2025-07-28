@@ -56,6 +56,17 @@ body {
     text-decoration: none;
 }
 
+/* ログアウトリンクのスタイル */
+.logout-link {
+    color: #dc3545 !important;
+    font-weight: bold;
+}
+
+.logout-link:hover {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
 /* メインコンテンツ */
 .main-content {
     padding: 2rem 0;

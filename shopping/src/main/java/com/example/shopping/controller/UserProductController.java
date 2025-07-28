@@ -52,7 +52,7 @@ public class UserProductController {
         // カート情報を追加
         model.addAttribute("cartItemCount", sessionCart.getCartItemCount(session));
         model.addAttribute("productListForm", productListForm);
-        return "product-list";
+        return "user/product-list";
     }
 
     /**
@@ -76,6 +76,6 @@ public class UserProductController {
         // カート情報を追加
         model.addAttribute("cartItemCount", sessionCart.getCartItemCount(session));
         model.addAttribute("productListForm", productListForm);
-        return "product-list";
+        return "user/product-list";
     }
 }

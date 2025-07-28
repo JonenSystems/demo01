@@ -8,7 +8,7 @@ import com.example.shopping.model.entity.Order;
 import com.example.shopping.model.entity.OrderDetail;
 import com.example.shopping.model.entity.Product;
 import com.example.shopping.repository.UserCartRepository;
-import com.example.shopping.repository.UserCustomerRepository;
+import com.example.shopping.repository.AdminCustomerRepository;
 import com.example.shopping.repository.UserOrderDetailRepository;
 import com.example.shopping.repository.UserOrderRepository;
 import com.example.shopping.service.UserOrderService;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class UserOrderServiceImpl implements UserOrderService {
 
     private final UserOrderRepository userOrderRepository;
-    private final UserCustomerRepository userCustomerRepository;
+    private final AdminCustomerRepository adminCustomerRepository;
     private final UserCartRepository userCartRepository;
     private final UserOrderDetailRepository userOrderDetailRepository;
 
@@ -224,22 +224,21 @@ public class UserOrderServiceImpl implements UserOrderService {
      */
     private Customer saveOrUpdateCustomer(UserCustomerDto customerDto) {
         // 既存の顧客を検索
-        Optional<Customer> existingCustomerOpt = userCustomerRepository.findByEmail(customerDto.getEmail());
+        Customer existingCustomer = adminCustomerRepository.findByEmail(customerDto.getEmail());
 
-        if (existingCustomerOpt.isPresent()) {
+        if (existingCustomer != null) {
             // 既存の顧客情報を更新
-            Customer existingCustomer = existingCustomerOpt.get();
             existingCustomer.setName(customerDto.getName());
             existingCustomer.setPhone(customerDto.getPhone());
             existingCustomer.setAddress(customerDto.getAddress());
             existingCustomer.setUpdatedAt(LocalDateTime.now());
-            return userCustomerRepository.save(existingCustomer);
+            return adminCustomerRepository.save(existingCustomer);
         } else {
             // 新しい顧客を作成
             Customer newCustomer = customerDto.toEntity();
             newCustomer.setCreatedAt(LocalDateTime.now());
             newCustomer.setUpdatedAt(LocalDateTime.now());
-            return userCustomerRepository.save(newCustomer);
+            return adminCustomerRepository.save(newCustomer);
         }
     }
 }
