@@ -1,15 +1,4 @@
--- 外部キー制約を一時無効化
-SET REFERENTIAL_INTEGRITY FALSE;
-
--- 全テーブルのデータを削除（AUTO_INCREMENTもリセット）
-TRUNCATE TABLE order_details;
-TRUNCATE TABLE orders;
-TRUNCATE TABLE customers;
-TRUNCATE TABLE products;
-TRUNCATE TABLE users;
-
--- 外部キー制約を再有効化
-SET REFERENTIAL_INTEGRITY TRUE;
+-- H2データベース用初期データ
 
 -- 商品データの投入
 INSERT INTO products (id, name, description, price, category, stock_quantity, image_path, created_at, updated_at) VALUES
@@ -20,7 +9,7 @@ INSERT INTO products (id, name, description, price, category, stock_quantity, im
 (5, 'タブレット', '軽量で持ち運びやすいタブレット', 60000.00, 'エレクトロニクス', 12, '/images/tablet.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- ユーザーデータの投入
--- 管理者ユーザー: admin / password
+-- 管理者ユーザー: admin / admin123
 -- 一般ユーザー: user1 / password
 INSERT INTO users (id, username, password, role, enabled, created_at, updated_at) VALUES
 (1, 'admin', '$2a$10$AV3Ed1Xe9qwt1qLXlns3aeFvinhEb603oMU9fJmIeKNV3OO/cm88u', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
