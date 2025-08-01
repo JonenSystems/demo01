@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ShoppingApplication {
 
 	public static void main(String[] args) {
+		// デフォルトで開発環境プロファイルを設定
+		System.setProperty("spring.profiles.active", "dev");
 		SpringApplication.run(ShoppingApplication.class, args);
 	}
 

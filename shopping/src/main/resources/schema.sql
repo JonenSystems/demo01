@@ -1,16 +1,3 @@
--- 外部キー制約を一時無効化
-SET REFERENTIAL_INTEGRITY FALSE;
-
--- 全テーブルのデータを削除（AUTO_INCREMENTもリセット）
-TRUNCATE TABLE order_details;
-TRUNCATE TABLE orders;
-TRUNCATE TABLE customers;
-TRUNCATE TABLE products;
-TRUNCATE TABLE users;
-
--- 外部キー制約を再有効化
-SET REFERENTIAL_INTEGRITY TRUE;
-
 -- 商品テーブル
 CREATE TABLE IF NOT EXISTS products (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

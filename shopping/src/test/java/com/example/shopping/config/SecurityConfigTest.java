@@ -63,9 +63,9 @@ class SecurityConfigTest {
     @Test
     void publicPages_ShouldBeAccessible() throws Exception {
         // 公開ページは認証なしでアクセス可能
-        // ルートパスにコントローラーが存在しないため、404エラーは正常
+        // ルートパスにはstatic/index.htmlが存在するため、200エラーは正常
         mockMvc.perform(get("/"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
 
     @Test
