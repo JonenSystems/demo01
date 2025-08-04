@@ -12,8 +12,8 @@ INSERT INTO products (id, name, description, price, category, stock_quantity, im
 -- 管理者ユーザー: admin / admin123
 -- 一般ユーザー: user1 / password
 INSERT INTO users (id, username, password, role, enabled, created_at, updated_at) VALUES
-(1, 'admin', '$2a$10$AV3Ed1Xe9qwt1qLXlns3aeFvinhEb603oMU9fJmIeKNV3OO/cm88u', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'user1', '$2a$10$JjH0T8QmINM70.g3LC0DAuV/MRJER73OUWFx1dEZi7/DR5Ajs1J9C', 'USER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(1, 'admin', '$2a$10$yET5njgbb6SB6975h/MGrOrJXhRZdoiRIsReY8yzZdXBxgVOG4KjS', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'user1', '$2a$10$L7E90/tnFa4SS6yhZb1uROjYGXEM9jnlGGQ5P2fp4dvb/bsvre546', 'USER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 顧客データの投入
 INSERT INTO customers (id, name, email, phone, address, created_at, updated_at) VALUES

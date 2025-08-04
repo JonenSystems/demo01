@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,41 +32,56 @@ public class AdminProductServiceImpl implements AdminProductService {
         log.debug("Getting product list: searchName={}, searchCategory={}, page={}",
                 searchName, searchCategory, pageable.getPageNumber());
 
-        Page<Product> productPage;
+        try {
+            log.debug("Step 1: Determining search type");
+            Page<Product> productPage;
 
-        if (searchName != null && !searchName.trim().isEmpty() &&
-                searchCategory != null && !searchCategory.trim().isEmpty()) {
-            // 商品名とカテゴリで検索
-            productPage = adminProductRepository.findByNameContainingIgnoreCaseAndCategoryOrderByIdDesc(
-                    searchName.trim(), searchCategory.trim(), pageable);
-        } else if (searchName != null && !searchName.trim().isEmpty()) {
-            // 商品名で検索
-            productPage = adminProductRepository.findByNameContainingIgnoreCaseOrderByIdDesc(
-                    searchName.trim(), pageable);
-        } else if (searchCategory != null && !searchCategory.trim().isEmpty()) {
-            // カテゴリで検索
-            productPage = adminProductRepository.findByCategoryOrderByIdDesc(
-                    searchCategory.trim(), pageable);
-        } else {
-            // 全商品取得
-            productPage = adminProductRepository.findAllByOrderByIdDesc(pageable);
+            if (searchName != null && !searchName.trim().isEmpty() &&
+                    searchCategory != null && !searchCategory.trim().isEmpty()) {
+                // 商品名とカテゴリで検索
+                log.debug("Step 2a: Searching by name and category");
+                productPage = adminProductRepository.findByNameContainingIgnoreCaseAndCategoryOrderByIdDesc(
+                        searchName.trim(), searchCategory.trim(), pageable);
+            } else if (searchName != null && !searchName.trim().isEmpty()) {
+                // 商品名で検索
+                log.debug("Step 2b: Searching by name only");
+                productPage = adminProductRepository.findByNameContainingIgnoreCaseOrderByIdDesc(
+                        searchName.trim(), pageable);
+            } else if (searchCategory != null && !searchCategory.trim().isEmpty()) {
+                // カテゴリで検索
+                log.debug("Step 2c: Searching by category only");
+                productPage = adminProductRepository.findByCategoryOrderByIdDesc(
+                        searchCategory.trim(), pageable);
+            } else {
+                // 全商品取得
+                log.debug("Step 2d: Getting all products");
+                productPage = adminProductRepository.findAllByOrderByIdDesc(pageable);
+            }
+
+            log.debug("Step 3: Converting to DTOs");
+            List<AdminProductDto> productDtos = productPage.getContent() != null ? productPage.getContent().stream()
+                    .map(AdminProductDto::fromEntity)
+                    .collect(Collectors.toList()) : new ArrayList<>();
+
+            log.debug("Step 4: Creating form");
+            AdminProductListForm form = AdminProductListForm.fromDtoList(productDtos);
+            form.setSearchName(searchName);
+            form.setSearchCategory(searchCategory);
+            form.setCategories(getAvailableCategories());
+            form.setCurrentPage(productPage.getNumber());
+            form.setTotalPages(productPage.getTotalPages());
+            form.setTotalElements(productPage.getTotalElements());
+            form.setHasNext(productPage.hasNext());
+            form.setHasPrevious(productPage.hasPrevious());
+
+            log.debug("Step 5: Returning form");
+            return form;
+        } catch (Exception e) {
+            log.error("Error in getProductList: {}", e.getMessage(), e);
+            log.error("Exception type: {}", e.getClass().getName());
+            log.error("Stack trace:", e);
+            return new AdminProductListForm();
         }
-
-        List<AdminProductDto> productDtos = productPage.getContent().stream()
-                .map(AdminProductDto::fromEntity)
-                .collect(Collectors.toList());
-
-        AdminProductListForm form = AdminProductListForm.fromDtoList(productDtos);
-        form.setSearchName(searchName);
-        form.setSearchCategory(searchCategory);
-        form.setCategories(getAvailableCategories());
-        form.setCurrentPage(productPage.getNumber());
-        form.setTotalPages(productPage.getTotalPages());
-        form.setTotalElements(productPage.getTotalElements());
-        form.setHasNext(productPage.hasNext());
-        form.setHasPrevious(productPage.hasPrevious());
-
-        return form;
     }
 
     @Override
@@ -114,20 +130,30 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     public List<String> getAvailableCategories() {
         log.debug("Getting available categories");
-        return adminProductRepository.findAll().stream()
-                .map(Product::getCategory)
-                .filter(category -> category != null && !category.trim().isEmpty())
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
+        try {
+            List<String> categories = adminProductRepository.findDistinctCategories();
+            return categories != null ? categories : new ArrayList<>();
+        } catch (Exception e) {
+            log.error("Error getting available categories", e);
+            return new ArrayList<>();
+        }
     }
 
     @Override
     public List<AdminProductDto> getLowStockProducts(Integer threshold) {
         log.debug("Getting low stock products: threshold={}", threshold);
-        return adminProductRepository.findByStockQuantityLessThanEqualOrderByIdDesc(threshold)
-                .stream()
-                .map(AdminProductDto::fromEntity)
-                .collect(Collectors.toList());
+        try {
+            List<Product> products = adminProductRepository.findByStockQuantityLessThanEqualOrderByIdDesc(threshold);
+            if (products == null) {
+                log.warn("Low stock products query returned null, returning empty list");
+                return new ArrayList<>();
+            }
+            return products.stream()
+                    .map(AdminProductDto::fromEntity)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Error getting low stock products: threshold={}", threshold, e);
+            return new ArrayList<>();
+        }
     }
 }

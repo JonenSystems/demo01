@@ -5,6 +5,7 @@ import com.example.shopping.repository.AdminUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.Optional;
  */
 @Repository
 @Transactional
+@Slf4j
 public class AdminUserRepositoryImpl implements AdminUserRepository {
 
     @PersistenceContext
@@ -52,6 +54,8 @@ public class AdminUserRepositoryImpl implements AdminUserRepository {
 
     @Override
     public Optional<User> findEnabledAdminByUsername(String username) {
+        log.debug("有効な管理者ユーザーを検索: username={}", username);
+        
         TypedQuery<User> query = entityManager.createQuery(
                 "SELECT u FROM User u WHERE u.username = :username AND u.role = :role AND u.enabled = :enabled",
                 User.class);
@@ -61,8 +65,11 @@ public class AdminUserRepositoryImpl implements AdminUserRepository {
 
         try {
             User user = query.getSingleResult();
+            log.debug("ユーザーが見つかりました: id={}, username={}, role={}, enabled={}", 
+                    user.getId(), user.getUsername(), user.getRole(), user.isEnabled());
             return Optional.of(user);
         } catch (Exception e) {
+            log.debug("ユーザーが見つかりませんでした: username={}, error={}", username, e.getMessage());
             return Optional.empty();
         }
     }

@@ -1,0 +1,128 @@
+package com.example.shopping.common.impl;
+
+import com.example.shopping.common.FileUploadService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
+
+/**
+ * ファイルアップロードサービス実装クラス
+ */
+@Component
+@Slf4j
+public class FileUploadServiceImpl implements FileUploadService {
+
+    // アップロードディレクトリのパス
+    private static final String UPLOAD_DIR = "src/main/resources/static/images";
+
+    // 許可する画像形式
+    private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+
+    /**
+     * ファイルをアップロードする
+     * 
+     * @param file アップロードするファイル
+     * @return アップロードされたファイルのパス
+     * @throws IOException ファイル操作エラー
+     */
+    @Override
+    public String uploadFile(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("ファイルが選択されていません");
+        }
+
+        // ファイル形式の検証
+        String originalFilename = file.getOriginalFilename();
+        if (!isValidImageFile(originalFilename)) {
+            throw new IllegalArgumentException("許可されていないファイル形式です");
+        }
+
+        // アップロードディレクトリの作成
+        Path uploadPath = Paths.get(UPLOAD_DIR);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        // ファイル名の生成（重複を避けるためUUIDを使用）
+        String fileExtension = getFileExtension(originalFilename);
+        String fileName = UUID.randomUUID().toString() + fileExtension;
+
+        // ファイルの保存
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        log.info("ファイルがアップロードされました: {}", filePath);
+
+        // 相対パスを返す（Webからアクセス可能なパス）
+        return "/images/" + fileName;
+    }
+
+    /**
+     * ファイルを削除する
+     * 
+     * @param imagePath 削除するファイルのパス
+     * @return 削除成功の場合true
+     */
+    @Override
+    public boolean deleteFile(String imagePath) {
+        if (imagePath == null || imagePath.isEmpty()) {
+            return false;
+        }
+
+        try {
+            // /images/ファイル名 の形式から実際のファイルパスを取得
+            String fileName = imagePath.replace("/images/", "");
+            Path filePath = Paths.get(UPLOAD_DIR, fileName);
+
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+                log.info("ファイルが削除されました: {}", filePath);
+                return true;
+            }
+        } catch (IOException e) {
+            log.error("ファイル削除中にエラーが発生しました: {}", e.getMessage());
+        }
+
+        return false;
+    }
+
+    /**
+     * 画像ファイルかどうかを判定する
+     * 
+     * @param filename ファイル名
+     * @return 画像ファイルの場合true
+     */
+    private boolean isValidImageFile(String filename) {
+        if (filename == null) {
+            return false;
+        }
+
+        String extension = getFileExtension(filename).toLowerCase();
+        for (String allowedExtension : ALLOWED_EXTENSIONS) {
+            if (allowedExtension.equals(extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * ファイル拡張子を取得する
+     * 
+     * @param filename ファイル名
+     * @return ファイル拡張子
+     */
+    private String getFileExtension(String filename) {
+        if (filename == null || filename.lastIndexOf(".") == -1) {
+            return "";
+        }
+        return filename.substring(filename.lastIndexOf("."));
+    }
+}

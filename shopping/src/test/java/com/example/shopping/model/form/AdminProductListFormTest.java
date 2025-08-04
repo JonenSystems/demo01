@@ -60,7 +60,8 @@ class AdminProductListFormTest {
         AdminProductListForm result = AdminProductListForm.fromDtoList(null);
 
         assertNotNull(result);
-        assertNull(result.getProducts());
+        assertNotNull(result.getProducts());
+        assertEquals(0, result.getProducts().size());
     }
 
     @Test

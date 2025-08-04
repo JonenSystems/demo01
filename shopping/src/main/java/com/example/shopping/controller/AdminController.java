@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,15 +35,26 @@ public class AdminController {
     public String dashboard(Model model) {
         log.debug("Admin dashboard requested");
 
-        // 注文統計情報を取得
-        Map<String, Object> orderStatistics = adminOrderService.getOrderStatistics();
+        try {
+            log.debug("Step 1: Getting order statistics");
+            Map<String, Object> orderStatistics = adminOrderService.getOrderStatistics();
 
-        // 在庫不足商品を取得
-        var lowStockProducts = adminProductService.getLowStockProducts(10);
+            log.debug("Step 2: Getting low stock products");
+            var lowStockProducts = adminProductService.getLowStockProducts(10);
 
-        model.addAttribute("orderStatistics", orderStatistics);
-        model.addAttribute("lowStockProducts", lowStockProducts);
+            log.debug("Step 3: Adding attributes to model");
+            model.addAttribute("orderStatistics", orderStatistics);
+            model.addAttribute("lowStockProducts", lowStockProducts);
 
-        return "admin/dashboard";
+            log.debug("Step 4: Returning dashboard view");
+            return "admin/dashboard";
+        } catch (Exception e) {
+            log.error("Error in dashboard: {}", e.getMessage(), e);
+            log.error("Exception type: {}", e.getClass().getName());
+            log.error("Stack trace:", e);
+            model.addAttribute("orderStatistics", new HashMap<>());
+            model.addAttribute("lowStockProducts", new ArrayList<>());
+            return "admin/dashboard";
+        }
     }
 }

@@ -31,4 +31,11 @@ public interface AdminProductRepository {
     boolean existsById(Long id);
 
     List<Product> findAll();
+
+    /**
+     * 利用可能なカテゴリの一覧を取得する
+     * 
+     * @return カテゴリの一覧
+     */
+    List<String> findDistinctCategories();
 }

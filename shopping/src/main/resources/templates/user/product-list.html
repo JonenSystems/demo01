@@ -40,16 +40,27 @@
                     <h1 class="card-title" th:text="${productListForm.selectedCategory != null ? productListForm.selectedCategory + 'の商品' : '商品一覧'}">商品一覧</h1>
                 </div>
                 
+                <!-- デバッグ情報 -->
+                <div th:if="${productListForm != null}">
+                    <p>商品リストサイズ: <span th:text="${productListForm.products != null ? productListForm.products.size() : 'null'}">0</span></p>
+                </div>
+                
                 <div th:if="${productListForm.hasProducts()}">
                     <div class="product-grid">
                         <div th:each="product : ${productListForm.products}" class="product-card">
                             <img th:if="${product.imagePath != null and !product.imagePath.empty}" 
-                                 th:src="${product.imagePath}" 
+                                 th:src="${product.imagePath + '?v=' + #temporals.format(product.updatedAt, 'yyyyMMddHHmmss')}" 
                                  th:alt="${product.name}" 
-                                 class="product-image">
+                                 class="product-image"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div th:unless="${product.imagePath != null and !product.imagePath.empty}" 
                                  class="product-image" 
                                  style="display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                 No Image
+                            </div>
+                            <div th:if="${product.imagePath != null and !product.imagePath.empty}" 
+                                 class="product-image" 
+                                 style="display: none; align-items: center; justify-content: center; color: #6c757d;">
                                  No Image
                             </div>
                             

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -68,9 +69,9 @@ public class AdminOrderServiceImpl implements AdminOrderService {
             orderPage = adminOrderRepository.findAllByOrderByIdDesc(pageable);
         }
 
-        List<AdminOrderDto> orderDtos = orderPage.getContent().stream()
+        List<AdminOrderDto> orderDtos = orderPage.getContent() != null ? orderPage.getContent().stream()
                 .map(AdminOrderDto::fromEntity)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : new ArrayList<>();
 
         AdminOrderListForm form = AdminOrderListForm.fromDtoList(orderDtos);
         form.setSearchOrderNumber(searchOrderNumber);
@@ -126,21 +127,32 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 
     @Override
     public Map<String, Object> getOrderStatistics() {
+        log.debug("Getting order statistics");
         Map<String, Object> statistics = new HashMap<>();
 
-        // 各ステータスの注文数を取得
-        for (Order.OrderStatus status : Order.OrderStatus.values()) {
-            long count = adminOrderRepository.countByStatus(status);
-            statistics.put(status.name() + "_COUNT", count);
+        try {
+            // 各ステータスの注文数を取得
+            for (Order.OrderStatus status : Order.OrderStatus.values()) {
+                log.debug("Counting orders with status: {}", status);
+                long count = adminOrderRepository.countByStatus(status);
+                statistics.put(status.name() + "_COUNT", count);
+                log.debug("Count for {}: {}", status, count);
+            }
+
+            // 今日の注文数を取得
+            LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+            LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+            log.debug("Counting today's orders: {} to {}", startOfDay, endOfDay);
+            long todayCount = adminOrderRepository.countTodayOrders(startOfDay, endOfDay);
+            statistics.put("TODAY_COUNT", todayCount);
+            log.debug("Today's count: {}", todayCount);
+
+            log.debug("Order statistics completed: {}", statistics);
+            return statistics;
+        } catch (Exception e) {
+            log.error("Error getting order statistics: {}", e.getMessage(), e);
+            return new HashMap<>();
         }
-
-        // 今日の注文数を取得
-        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-        long todayCount = adminOrderRepository.countTodayOrders(startOfDay, endOfDay);
-        statistics.put("TODAY_COUNT", todayCount);
-
-        return statistics;
     }
 
     @Override

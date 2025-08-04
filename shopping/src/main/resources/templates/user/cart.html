@@ -50,9 +50,14 @@
                                     <img th:if="${item.productImagePath != null and !item.productImagePath.empty}" 
                                          th:src="${item.productImagePath}" 
                                          th:alt="${item.productName}" 
-                                         style="width: 80px; height: 80px; object-fit: cover;">
+                                         style="width: 80px; height: 80px; object-fit: cover;"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <div th:unless="${item.productImagePath != null and !item.productImagePath.empty}" 
                                          style="width: 80px; height: 80px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;">
+                                        No Image
+                                    </div>
+                                    <div th:if="${item.productImagePath != null and !item.productImagePath.empty}" 
+                                         style="width: 80px; height: 80px; background-color: #f8f9fa; display: none; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;">
                                         No Image
                                     </div>
                                 </td>

@@ -47,7 +47,7 @@ public class SecurityConfig {
                                 .formLogin(form -> form
                                                 .loginPage("/admin/login")
                                                 .loginProcessingUrl("/admin/login")
-                                                .defaultSuccessUrl("/admin/products", true)
+                                                .defaultSuccessUrl("/admin", true)
                                                 .failureUrl("/admin/login?error=true")
                                                 .usernameParameter("username")
                                                 .passwordParameter("password")
@@ -68,6 +68,7 @@ public class SecurityConfig {
                                 .sessionManagement(session -> session
                                                 .maximumSessions(1) // 同一ユーザーの同時セッション数を1に制限
                                                 .expiredUrl("/admin/login?expired=true"))
+                                // セッション固定攻撃対策（デフォルトで有効）
 
                                 // ヘッダー設定（H2コンソール用）
                                 .headers(headers -> headers
@@ -97,7 +98,7 @@ public class SecurityConfig {
                                 .formLogin(form -> form
                                                 .loginPage("/admin/login")
                                                 .loginProcessingUrl("/admin/login")
-                                                .defaultSuccessUrl("/admin/products", true)
+                                                .defaultSuccessUrl("/admin", true)
                                                 .failureUrl("/admin/login?error=true")
                                                 .usernameParameter("username")
                                                 .passwordParameter("password")
@@ -118,6 +119,7 @@ public class SecurityConfig {
                                 .sessionManagement(session -> session
                                                 .maximumSessions(1) // 同一ユーザーの同時セッション数を1に制限
                                                 .expiredUrl("/admin/login?expired=true"))
+                                // セッション固定攻撃対策（デフォルトで有効）
 
                                 // セキュリティヘッダーの強化
                                 .headers(headers -> headers

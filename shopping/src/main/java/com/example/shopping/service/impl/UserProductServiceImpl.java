@@ -22,7 +22,7 @@ public class UserProductServiceImpl implements UserProductService {
     public List<UserProductDto> getAllProducts() {
         List<Product> products = userProductRepository.findAvailableProducts();
         return products.stream()
-                .map(this::convertToDto)
+                .map(UserProductDto::fromEntity)
                 .toList();
     }
 
@@ -30,21 +30,7 @@ public class UserProductServiceImpl implements UserProductService {
     public List<UserProductDto> getProductsByCategory(String category) {
         List<Product> products = userProductRepository.findAvailableProductsByCategory(category);
         return products.stream()
-                .map(this::convertToDto)
+                .map(UserProductDto::fromEntity)
                 .toList();
-    }
-
-    /**
-     * ProductエンティティをUserProductDtoに変換
-     */
-    private UserProductDto convertToDto(Product product) {
-        UserProductDto dto = new UserProductDto();
-        dto.setId(product.getId());
-        dto.setName(product.getName());
-        dto.setDescription(product.getDescription());
-        dto.setPrice(product.getPrice());
-        dto.setCategory(product.getCategory());
-        dto.setStockQuantity(product.getStockQuantity());
-        return dto;
     }
 }

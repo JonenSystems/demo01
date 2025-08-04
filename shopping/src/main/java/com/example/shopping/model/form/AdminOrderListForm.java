@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public class AdminOrderListForm {
      */
     public static AdminOrderListForm fromDtoList(List<AdminOrderDto> orders) {
         AdminOrderListForm form = new AdminOrderListForm();
-        form.setOrders(orders);
+        form.setOrders(orders != null ? orders : new ArrayList<>());
         return form;
     }
 
