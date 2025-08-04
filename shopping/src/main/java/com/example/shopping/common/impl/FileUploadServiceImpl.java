@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+import jakarta.annotation.PostConstruct;
 
 /**
  * ファイルアップロードサービス実装クラス
@@ -19,11 +20,27 @@ import java.util.UUID;
 @Slf4j
 public class FileUploadServiceImpl implements FileUploadService {
 
-    // アップロードディレクトリのパス
-    private static final String UPLOAD_DIR = "src/main/resources/static/images";
+    // アップロードディレクトリのパス（環境に応じて動的に設定）
+    private String uploadDir;
 
     // 許可する画像形式
     private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+
+    /**
+     * アップロードディレクトリを初期化する
+     */
+    @PostConstruct
+    public void initUploadDir() {
+        String activeProfile = System.getProperty("spring.profiles.active", "dev");
+        if ("prod".equals(activeProfile)) {
+            uploadDir = "/opt/shopping/static/images/product-images";
+        } else if ("test".equals(activeProfile)) {
+            uploadDir = "src/test/resources/static/images/product-images";
+        } else {
+            uploadDir = "src/main/resources/static/images/product-images";
+        }
+        log.debug("アップロードディレクトリを設定しました: {}", uploadDir);
+    }
 
     /**
      * ファイルをアップロードする
@@ -45,7 +62,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         }
 
         // アップロードディレクトリの作成
-        Path uploadPath = Paths.get(UPLOAD_DIR);
+        Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -61,7 +78,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         log.info("ファイルがアップロードされました: {}", filePath);
 
         // 相対パスを返す（Webからアクセス可能なパス）
-        return "/images/" + fileName;
+        return "/images/product-images/" + fileName;
     }
 
     /**
@@ -77,9 +94,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         }
 
         try {
-            // /images/ファイル名 の形式から実際のファイルパスを取得
-            String fileName = imagePath.replace("/images/", "");
-            Path filePath = Paths.get(UPLOAD_DIR, fileName);
+            // /images/product-images/ファイル名 の形式から実際のファイルパスを取得
+            String fileName = imagePath.replace("/images/product-images/", "");
+            Path filePath = Paths.get(uploadDir, fileName);
 
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
