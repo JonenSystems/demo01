@@ -1,3 +1,5 @@
 shopping/docs/
 shopping/src/main/resources/templates.zip
 shopping/temp/
+shopping/src/main/resources/static/images/
+shopping/logs/application.log

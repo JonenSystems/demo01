@@ -2,18 +2,18 @@
 
 -- 商品データの投入
 INSERT INTO products (id, name, description, price, category, stock_quantity, image_path, created_at, updated_at) VALUES
-(1, 'ノートパソコン', '高性能なビジネス用ノートパソコン', 120000.00, 'エレクトロニクス', 10, '/images/laptop.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'スマートフォン', '最新のスマートフォン', 80000.00, 'エレクトロニクス', 15, '/images/smartphone.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 'ワイヤレスイヤホン', 'ノイズキャンセリング機能付き', 25000.00, 'エレクトロニクス', 20, '/images/earphones.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'デジタルカメラ', '高画質なデジタルカメラ', 45000.00, 'エレクトロニクス', 8, '/images/camera.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(5, 'タブレット', '軽量で持ち運びやすいタブレット', 60000.00, 'エレクトロニクス', 12, '/images/tablet.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(1, 'ノートパソコン', '高性能なビジネス用ノートパソコン', 120000.00, 'エレクトロニクス', 10, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'スマートフォン', '最新のスマートフォン', 80000.00, 'エレクトロニクス', 15, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 'ワイヤレスイヤホン', 'ノイズキャンセリング機能付き', 25000.00, 'エレクトロニクス', 20, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, 'デジタルカメラ', '高画質なデジタルカメラ', 45000.00, 'エレクトロニクス', 8, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(5, 'タブレット', '軽量で持ち運びやすいタブレット', 60000.00, 'エレクトロニクス', 12, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- ユーザーデータの投入
 -- 管理者ユーザー: admin / admin123
 -- 一般ユーザー: user1 / password
 INSERT INTO users (id, username, password, role, enabled, created_at, updated_at) VALUES
-(1, 'admin', '$2a$10$AV3Ed1Xe9qwt1qLXlns3aeFvinhEb603oMU9fJmIeKNV3OO/cm88u', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'user1', '$2a$10$JjH0T8QmINM70.g3LC0DAuV/MRJER73OUWFx1dEZi7/DR5Ajs1J9C', 'USER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(1, 'admin', '$2a$10$yET5njgbb6SB6975h/MGrOrJXhRZdoiRIsReY8yzZdXBxgVOG4KjS', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'user1', '$2a$10$L7E90/tnFa4SS6yhZb1uROjYGXEM9jnlGGQ5P2fp4dvb/bsvre546', 'USER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 顧客データの投入
 INSERT INTO customers (id, name, email, phone, address, created_at, updated_at) VALUES

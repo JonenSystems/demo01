@@ -3,6 +3,7 @@ package com.example.shopping.model.form;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
@@ -21,6 +22,7 @@ public class AdminProductForm {
     private String category;
     private Integer stockQuantity;
     private String imagePath;
+    private MultipartFile imageFile;
 
     /**
      * DTOからFormへの変換

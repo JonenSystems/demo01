@@ -45,6 +45,10 @@ public class UserProductController {
             productDtos = userProductService.getAllProducts();
         }
 
+        log.debug("Retrieved {} products", productDtos.size());
+        productDtos.forEach(product -> log.debug("Product: id={}, name={}, imagePath={}", 
+            product.getId(), product.getName(), product.getImagePath()));
+
         // DTOリストからFormを作成
         UserProductListForm productListForm = new UserProductListForm();
         productListForm.setProducts(productDtos);

@@ -397,9 +397,9 @@ class AdminProductServiceImplTest {
     @Test
     void UT_Service_0035_getAvailableCategories_正常系() {
         // 利用可能カテゴリ一覧取得
-        List<Product> allProducts = Arrays.asList(testProduct1, testProduct2, testProduct3);
-        when(adminProductRepository.findAll())
-                .thenReturn(allProducts);
+        List<String> categories = Arrays.asList("電子機器", "衣類");
+        when(adminProductRepository.findDistinctCategories())
+                .thenReturn(categories);
 
         List<String> result = adminProductService.getAvailableCategories();
 
@@ -407,7 +407,20 @@ class AdminProductServiceImplTest {
         assertEquals(2, result.size());
         assertTrue(result.contains("電子機器"));
         assertTrue(result.contains("衣類"));
-        verify(adminProductRepository).findAll();
+        verify(adminProductRepository).findDistinctCategories();
+    }
+
+    @Test
+    void UT_Service_0041_getAvailableCategories_異常系() {
+        // リポジトリがnullを返す場合
+        when(adminProductRepository.findDistinctCategories())
+                .thenReturn(null);
+
+        List<String> result = adminProductService.getAvailableCategories();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(adminProductRepository).findDistinctCategories();
     }
 
     @Test
@@ -462,5 +475,18 @@ class AdminProductServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(adminProductRepository).findByStockQuantityLessThanEqualOrderByIdDesc(null);
+    }
+
+    @Test
+    void UT_Service_0040_getLowStockProducts_異常系() {
+        // リポジトリがnullを返す場合
+        when(adminProductRepository.findByStockQuantityLessThanEqualOrderByIdDesc(10))
+                .thenReturn(null);
+
+        List<AdminProductDto> result = adminProductService.getLowStockProducts(10);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(adminProductRepository).findByStockQuantityLessThanEqualOrderByIdDesc(10);
     }
 }

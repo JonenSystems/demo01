@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * ユーザー商品DTO
@@ -21,6 +22,7 @@ public class UserProductDto {
     private String category;
     private Integer stockQuantity;
     private String imagePath;
+    private LocalDateTime updatedAt;
 
     /**
      * EntityからDTOへの変換
@@ -41,6 +43,7 @@ public class UserProductDto {
         dto.setCategory(product.getCategory());
         dto.setStockQuantity(product.getStockQuantity());
         dto.setImagePath(product.getImagePath());
+        dto.setUpdatedAt(product.getUpdatedAt());
         return dto;
     }
 
@@ -58,6 +61,7 @@ public class UserProductDto {
         entity.setCategory(this.category);
         entity.setStockQuantity(this.stockQuantity);
         entity.setImagePath(this.imagePath);
+        entity.setUpdatedAt(this.updatedAt);
         return entity;
     }
 }

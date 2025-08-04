@@ -29,7 +29,7 @@
                     <h1 class="card-title" th:text="${productForm.isNew() ? '新規商品登録' : '商品編集'}">商品管理</h1>
                 </div>
                 
-                <form th:action="@{/admin/products/save}" method="post" th:object="${productForm}">
+                <form th:action="@{/admin/products/save}" method="post" th:object="${productForm}" enctype="multipart/form-data">
                     <input type="hidden" th:field="*{id}">
                     
                     <div class="form-group">
@@ -64,9 +64,27 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="imagePath" class="form-label">画像パス</label>
-                        <input type="text" id="imagePath" name="imagePath" th:field="*{imagePath}" class="form-control">
-                        <small class="form-text text-muted">画像のURLまたはファイルパスを入力してください</small>
+                        <label for="imageFile" class="form-label">商品画像</label>
+                        <input type="file" id="imageFile" name="imageFile" class="form-control" accept="image/*">
+                        <small class="form-text text-muted">JPG, PNG, GIF, WebP形式の画像ファイルを選択してください（最大10MB）</small>
+                        
+                        <!-- 既存の画像パスフィールド（隠しフィールド） -->
+                        <input type="hidden" id="imagePath" name="imagePath" th:field="*{imagePath}">
+                        
+                        <!-- 既存画像の表示 -->
+                        <div th:if="${productForm.imagePath != null and productForm.imagePath != ''}" style="margin-top: 10px;">
+                            <label class="form-label">現在の画像:</label>
+                            <div style="margin-top: 5px;">
+                                <img th:src="${productForm.imagePath + '?v=' + #dates.format(#dates.createNow(), 'yyyyMMddHHmmss')}" 
+                                     alt="商品画像" 
+                                     style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <div style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa; display: none; align-items: center; justify-content: center; color: #6c757d; font-size: 0.9rem;">
+                                    画像を読み込めませんでした
+                                </div>
+                                <p style="margin-top: 5px; font-size: 0.9em; color: #666;">新しい画像を選択すると、この画像が置き換えられます</p>
+                            </div>
+                        </div>
                     </div>
                     
                     <div style="text-align: center; margin-top: 2rem;">

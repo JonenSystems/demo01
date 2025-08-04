@@ -122,20 +122,28 @@ public class AdminOrderRepositoryImpl implements AdminOrderRepository {
 
         @Override
         public long countByStatus(Order.OrderStatus status) {
-                return entityManager.createQuery(
-                                "SELECT COUNT(o) FROM Order o WHERE o.status = :status", Long.class)
-                                .setParameter("status", status)
-                                .getSingleResult();
+                try {
+                        return entityManager.createQuery(
+                                        "SELECT COUNT(o) FROM Order o WHERE o.status = :status", Long.class)
+                                        .setParameter("status", status)
+                                        .getSingleResult();
+                } catch (Exception e) {
+                        return 0L;
+                }
         }
 
         @Override
         public long countTodayOrders(LocalDateTime startOfDay, LocalDateTime endOfDay) {
-                return entityManager.createQuery(
-                                "SELECT COUNT(o) FROM Order o WHERE o.createdAt BETWEEN :startOfDay AND :endOfDay",
-                                Long.class)
-                                .setParameter("startOfDay", startOfDay)
-                                .setParameter("endOfDay", endOfDay)
-                                .getSingleResult();
+                try {
+                        return entityManager.createQuery(
+                                        "SELECT COUNT(o) FROM Order o WHERE o.createdAt BETWEEN :startOfDay AND :endOfDay",
+                                        Long.class)
+                                        .setParameter("startOfDay", startOfDay)
+                                        .setParameter("endOfDay", endOfDay)
+                                        .getSingleResult();
+                } catch (Exception e) {
+                        return 0L;
+                }
         }
 
         @Override

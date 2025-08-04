@@ -90,13 +90,13 @@ class AdminProductRepositoryImplTest {
         assertEquals("テスト商品2", result.getContent().get(1).getName());
 
         verify(entityManager).createQuery(
-                "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) ORDER BY p.id DESC",
+                "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER('%' || :name || '%') ORDER BY p.id DESC",
                 Product.class);
         verify(productQuery).setParameter("name", "テスト商品");
         verify(productQuery).setFirstResult(0);
         verify(productQuery).setMaxResults(10);
         verify(entityManager).createQuery(
-                "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))", Long.class);
+                "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER('%' || :name || '%')", Long.class);
         verify(longQuery).setParameter("name", "テスト商品");
     }
 
@@ -123,11 +123,11 @@ class AdminProductRepositoryImplTest {
         assertEquals(0, result.getTotalPages());
 
         verify(entityManager).createQuery(
-                "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) ORDER BY p.id DESC",
+                "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER('%' || :name || '%') ORDER BY p.id DESC",
                 Product.class);
         verify(productQuery).setParameter("name", "存在しない商品");
         verify(entityManager).createQuery(
-                "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))", Long.class);
+                "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER('%' || :name || '%')", Long.class);
         verify(longQuery).setParameter("name", "存在しない商品");
     }
 
@@ -223,14 +223,14 @@ class AdminProductRepositoryImplTest {
         assertEquals("電子機器", result.getContent().get(1).getCategory());
 
         verify(entityManager).createQuery(
-                "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) AND p.category = :category ORDER BY p.id DESC",
+                "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER('%' || :name || '%') AND p.category = :category ORDER BY p.id DESC",
                 Product.class);
         verify(productQuery).setParameter("name", "テスト商品");
         verify(productQuery).setParameter("category", "電子機器");
         verify(productQuery).setFirstResult(0);
         verify(productQuery).setMaxResults(10);
         verify(entityManager).createQuery(
-                "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) AND p.category = :category",
+                "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER('%' || :name || '%') AND p.category = :category",
                 Long.class);
         verify(longQuery).setParameter("name", "テスト商品");
         verify(longQuery).setParameter("category", "電子機器");
@@ -260,12 +260,12 @@ class AdminProductRepositoryImplTest {
         assertEquals(0, result.getTotalPages());
 
         verify(entityManager).createQuery(
-                "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) AND p.category = :category ORDER BY p.id DESC",
+                "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER('%' || :name || '%') AND p.category = :category ORDER BY p.id DESC",
                 Product.class);
         verify(productQuery).setParameter("name", "存在しない商品");
         verify(productQuery).setParameter("category", "存在しないカテゴリ");
         verify(entityManager).createQuery(
-                "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) AND p.category = :category",
+                "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER('%' || :name || '%') AND p.category = :category",
                 Long.class);
         verify(longQuery).setParameter("name", "存在しない商品");
         verify(longQuery).setParameter("category", "存在しないカテゴリ");
