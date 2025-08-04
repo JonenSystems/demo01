@@ -82,7 +82,7 @@
                                 <td th:text="${product.id}">ID</td>
                                 <td>
                                     <img th:if="${product.imagePath != null and !product.imagePath.empty}" 
-                                         th:src="${product.imagePath + '?v=' + #temporals.format(product.updatedAt, 'yyyyMMddHHmmss')}" 
+                                         th:src="${product.imagePath + '?v=' + #temporals.format(product.updatedAt, 'yyyyMMddHHmmss') + (cacheBustingTimestamp != null ? '&t=' + cacheBustingTimestamp : '')}" 
                                          th:alt="${product.name}" 
                                          style="width: 60px; height: 60px; object-fit: cover;"
                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">

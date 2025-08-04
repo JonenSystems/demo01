@@ -94,12 +94,16 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     @Transactional
     public boolean saveProduct(AdminProductDto productDto) {
-        log.debug("Saving product: id={}, name={}", productDto.getId(), productDto.getName());
+        log.debug("Saving product: id={}, name={}, imagePath={}",
+                productDto.getId(), productDto.getName(), productDto.getImagePath());
 
         try {
             Product product = productDto.toEntity();
+            log.debug("Entity変換後 - id: {}, name: {}, imagePath: {}",
+                    product.getId(), product.getName(), product.getImagePath());
             Product savedProduct = adminProductRepository.save(product);
-            log.debug("Product saved successfully: id={}", savedProduct.getId());
+            log.debug("Product saved successfully: id={}, imagePath={}",
+                    savedProduct.getId(), savedProduct.getImagePath());
             return true;
         } catch (Exception e) {
             log.error("Error saving product", e);

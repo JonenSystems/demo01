@@ -31,7 +31,7 @@ public class AdminProductController {
 
     @PostConstruct
     public void init() {
-        System.err.println("=== AdminProductController initialized ===");
+        log.debug("AdminProductController initialized");
     }
 
     /**
@@ -47,26 +47,25 @@ public class AdminProductController {
     public String productList(@RequestParam(value = "searchName", required = false) String searchName,
             @RequestParam(value = "searchCategory", required = false) String searchCategory,
             @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "t", required = false) String timestamp,
             Model model) {
-        System.err.println("=== Admin product list requested: searchName=" + searchName + ", searchCategory="
-                + searchCategory + ", page=" + page + " ===");
+        log.debug("Admin product list requested: searchName={}, searchCategory={}, page={}",
+                searchName, searchCategory, page);
 
         try {
-            System.err.println("=== Step 1: Creating pageable ===");
             Pageable pageable = PageRequest.of(page, 10); // 1ページ10件
-
-            System.err.println("=== Step 2: Calling adminProductService.getProductList ===");
             AdminProductListForm productListForm = adminProductService.getProductList(searchName, searchCategory,
                     pageable);
 
-            System.err.println("=== Step 3: Adding productListForm to model ===");
             model.addAttribute("productListForm", productListForm);
 
-            System.err.println("=== Step 4: Returning view ===");
+            if (timestamp != null) {
+                model.addAttribute("cacheBustingTimestamp", timestamp);
+            }
+
             return "admin/product-list";
         } catch (Exception e) {
-            System.err.println("Error in productList: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error in productList: {}", e.getMessage(), e);
             model.addAttribute("productListForm", new AdminProductListForm());
             return "admin/product-list";
         }
@@ -135,6 +134,8 @@ public class AdminProductController {
             }
 
             AdminProductDto productDto = productForm.toDto();
+            log.debug("保存前のDTO - id: {}, name: {}, imagePath: {}",
+                    productDto.getId(), productDto.getName(), productDto.getImagePath());
             boolean success = adminProductService.saveProduct(productDto);
 
             if (success) {
@@ -151,7 +152,8 @@ public class AdminProductController {
             redirectAttributes.addFlashAttribute("error", "商品の保存に失敗しました: " + e.getMessage());
         }
 
-        return "redirect:/admin/products";
+        // キャッシュバスティング用のタイムスタンプを追加
+        return "redirect:/admin/products?t=" + System.currentTimeMillis();
     }
 
     /**
@@ -212,7 +214,8 @@ public class AdminProductController {
             redirectAttributes.addFlashAttribute("error", "商品の削除に失敗しました: " + e.getMessage());
         }
 
-        return "redirect:/admin/products";
+        // キャッシュバスティング用のタイムスタンプを追加
+        return "redirect:/admin/products?t=" + System.currentTimeMillis();
     }
 
     /**
