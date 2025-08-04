@@ -126,6 +126,15 @@ public class AdminProductController {
                 productForm.getId(), productForm.getName());
 
         try {
+            // 既存の商品情報を取得（更新時のみ）
+            String oldImagePath = null;
+            if (productForm.getId() != null) {
+                AdminProductDto existingProduct = adminProductService.getProductById(productForm.getId());
+                if (existingProduct != null) {
+                    oldImagePath = existingProduct.getImagePath();
+                }
+            }
+
             // ファイルアップロード処理
             if (productForm.getImageFile() != null && !productForm.getImageFile().isEmpty()) {
                 String uploadedImagePath = fileUploadService.uploadFile(productForm.getImageFile());
@@ -139,6 +148,13 @@ public class AdminProductController {
             boolean success = adminProductService.saveProduct(productDto);
 
             if (success) {
+                // 商品保存成功後、古い画像ファイルを削除
+                if (oldImagePath != null && !oldImagePath.isEmpty() &&
+                        productForm.getImageFile() != null && !productForm.getImageFile().isEmpty()) {
+                    fileUploadService.deleteFile(oldImagePath);
+                    log.debug("古い画像ファイルを削除しました: {}", oldImagePath);
+                }
+
                 if (productForm.isNew()) {
                     redirectAttributes.addFlashAttribute("message", "商品を登録しました");
                 } else {

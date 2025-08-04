@@ -2,11 +2,11 @@
 
 -- 商品データの投入
 INSERT INTO products (id, name, description, price, category, stock_quantity, image_path, created_at, updated_at) VALUES
-(1, 'ノートパソコン', '高性能なビジネス用ノートパソコン', 120000.00, 'エレクトロニクス', 10, '/images/7f861d2a-b24d-40df-ad2b-ac491e945bb4.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'スマートフォン', '最新のスマートフォン', 80000.00, 'エレクトロニクス', 15, '/images/ab4491db-f147-43ba-af84-0280e3acd035.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 'ワイヤレスイヤホン', 'ノイズキャンセリング機能付き', 25000.00, 'エレクトロニクス', 20, '/images/7127e2ba-0633-4449-b0d1-b7b1d7cc2002.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'デジタルカメラ', '高画質なデジタルカメラ', 45000.00, 'エレクトロニクス', 8, '/images/d1d42a58-4118-4920-a49e-8a3c2c5b0d6b.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(5, 'タブレット', '軽量で持ち運びやすいタブレット', 60000.00, 'エレクトロニクス', 12, '/images/df9fa236-7820-4e3a-bd25-1db40b2403c9.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(1, 'ノートパソコン', '高性能なビジネス用ノートパソコン', 120000.00, 'エレクトロニクス', 10, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'スマートフォン', '最新のスマートフォン', 80000.00, 'エレクトロニクス', 15, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 'ワイヤレスイヤホン', 'ノイズキャンセリング機能付き', 25000.00, 'エレクトロニクス', 20, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, 'デジタルカメラ', '高画質なデジタルカメラ', 45000.00, 'エレクトロニクス', 8, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(5, 'タブレット', '軽量で持ち運びやすいタブレット', 60000.00, 'エレクトロニクス', 12, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- ユーザーデータの投入
 -- 管理者ユーザー: admin / admin123
