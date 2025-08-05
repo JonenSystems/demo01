@@ -3,7 +3,10 @@ package com.example.shopping.common.impl;
 import com.example.shopping.common.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,14 +16,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
-import jakarta.annotation.PostConstruct;
 
 /**
  * ファイルアップロードサービス実装クラス
  */
 @Component
 @Slf4j
-public class FileUploadServiceImpl implements FileUploadService {
+public class FileUploadServiceImpl implements FileUploadService, ApplicationListener<ApplicationReadyEvent> {
 
     // アップロードディレクトリのパス（環境に応じて動的に設定）
     private String uploadDir;
@@ -32,14 +34,21 @@ public class FileUploadServiceImpl implements FileUploadService {
     private Environment environment;
 
     /**
+     * アプリケーション起動完了時にアップロードディレクトリを初期化する
+     */
+    @Override
+    public void onApplicationEvent(@NonNull ApplicationReadyEvent event) {
+        initUploadDir();
+    }
+
+    /**
      * アップロードディレクトリを初期化する
      */
-    @PostConstruct
-    public void initUploadDir() {
+    private void initUploadDir() {
         // Spring BootのEnvironmentからプロファイルを取得
         String[] activeProfiles = environment.getActiveProfiles();
         String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "dev";
-        
+
         log.info("Spring Boot Environment から取得したアクティブプロファイル: {}", activeProfile);
 
         if ("prod".equals(activeProfile)) {
