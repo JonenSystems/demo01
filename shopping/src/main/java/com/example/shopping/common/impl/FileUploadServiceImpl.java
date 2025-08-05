@@ -2,6 +2,8 @@ package com.example.shopping.common.impl;
 
 import com.example.shopping.common.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,21 +28,19 @@ public class FileUploadServiceImpl implements FileUploadService {
     // 許可する画像形式
     private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
 
+    @Autowired
+    private Environment environment;
+
     /**
      * アップロードディレクトリを初期化する
      */
     @PostConstruct
     public void initUploadDir() {
-        // 環境変数からプロファイルを取得
-        String activeProfile = System.getProperty("spring.profiles.active");
-        if (activeProfile == null) {
-            activeProfile = System.getenv("SPRING_PROFILES_ACTIVE");
-        }
-        if (activeProfile == null) {
-            activeProfile = "dev"; // デフォルト
-        }
-
-        log.info("アクティブプロファイル: {}", activeProfile);
+        // Spring BootのEnvironmentからプロファイルを取得
+        String[] activeProfiles = environment.getActiveProfiles();
+        String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "dev";
+        
+        log.info("Spring Boot Environment から取得したアクティブプロファイル: {}", activeProfile);
 
         if ("prod".equals(activeProfile)) {
             uploadDir = "/opt/shopping/static/images/product-images";
