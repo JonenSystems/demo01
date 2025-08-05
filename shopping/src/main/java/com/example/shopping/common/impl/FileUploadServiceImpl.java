@@ -31,7 +31,17 @@ public class FileUploadServiceImpl implements FileUploadService {
      */
     @PostConstruct
     public void initUploadDir() {
-        String activeProfile = System.getProperty("spring.profiles.active", "dev");
+        // 環境変数からプロファイルを取得
+        String activeProfile = System.getProperty("spring.profiles.active");
+        if (activeProfile == null) {
+            activeProfile = System.getenv("SPRING_PROFILES_ACTIVE");
+        }
+        if (activeProfile == null) {
+            activeProfile = "dev"; // デフォルト
+        }
+
+        log.info("アクティブプロファイル: {}", activeProfile);
+
         if ("prod".equals(activeProfile)) {
             uploadDir = "/opt/shopping/static/images/product-images";
         } else if ("test".equals(activeProfile)) {
@@ -39,7 +49,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         } else {
             uploadDir = "src/main/resources/static/images/product-images";
         }
-        log.debug("アップロードディレクトリを設定しました: {}", uploadDir);
+        log.info("アップロードディレクトリを設定しました: {}", uploadDir);
     }
 
     /**
