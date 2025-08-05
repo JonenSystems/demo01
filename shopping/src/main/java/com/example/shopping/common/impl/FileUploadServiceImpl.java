@@ -3,6 +3,7 @@ package com.example.shopping.common.impl;
 import com.example.shopping.common.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
@@ -24,7 +25,8 @@ import java.util.UUID;
 @Slf4j
 public class FileUploadServiceImpl implements FileUploadService, ApplicationListener<ApplicationReadyEvent> {
 
-    // アップロードディレクトリのパス（環境に応じて動的に設定）
+    // アップロードディレクトリのパス（設定ファイルから取得）
+    @Value("${app.upload.dir}")
     private String uploadDir;
 
     // 許可する画像形式
@@ -50,15 +52,7 @@ public class FileUploadServiceImpl implements FileUploadService, ApplicationList
         String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "dev";
 
         log.info("Spring Boot Environment から取得したアクティブプロファイル: {}", activeProfile);
-
-        if ("prod".equals(activeProfile)) {
-            uploadDir = "/opt/shopping/static/images/product-images";
-        } else if ("test".equals(activeProfile)) {
-            uploadDir = "src/test/resources/static/images/product-images";
-        } else {
-            uploadDir = "src/main/resources/static/images/product-images";
-        }
-        log.info("アップロードディレクトリを設定しました: {}", uploadDir);
+        log.info("設定ファイルから取得したアップロードディレクトリ: {}", uploadDir);
     }
 
     /**
