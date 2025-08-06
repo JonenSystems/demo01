@@ -1,19 +1,19 @@
 package com.example.shopping;
 
+import com.example.shopping.common.impl.FileUploadServiceImpl;
+import com.example.shopping.common.DatabaseConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
  * ショッピングアプリケーションのメインクラス
  */
 @SpringBootApplication
-@ComponentScan(basePackages = "com.example.shopping")
+@EnableConfigurationProperties({ FileUploadServiceImpl.class, DatabaseConfig.class })
 public class ShoppingApplication {
 
 	public static void main(String[] args) {
-		// デフォルトで開発環境プロファイルを設定
-		System.setProperty("spring.profiles.active", "dev");
 		SpringApplication.run(ShoppingApplication.class, args);
 	}
 }

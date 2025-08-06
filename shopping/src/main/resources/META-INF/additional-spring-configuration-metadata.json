@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "name": "app.upload.dir",
+      "type": "java.lang.String",
+      "description": "アップロードディレクトリのパス"
+    },
+    {
+      "name": "app.logs.dir",
+      "type": "java.lang.String",
+      "description": "ログディレクトリのパス"
+    },
+    {
+      "name": "app.database.url",
+      "type": "java.lang.String",
+      "description": "データベースURL"
+    },
+    {
+      "name": "app.database.driver-class-name",
+      "type": "java.lang.String",
+      "description": "データベースドライバークラス名"
+    },
+    {
+      "name": "app.database.username",
+      "type": "java.lang.String",
+      "description": "データベースユーザー名"
+    },
+    {
+      "name": "app.database.password",
+      "type": "java.lang.String",
+      "description": "データベースパスワード"
+    },
+    {
+      "name": "app.database.platform",
+      "type": "java.lang.String",
+      "description": "データベースプラットフォーム"
+    },
+    {
+      "name": "app.database.ddl-auto",
+      "type": "java.lang.String",
+      "description": "DDL自動生成設定"
+    },
+    {
+      "name": "app.database.show-sql",
+      "type": "java.lang.Boolean",
+      "description": "SQL表示設定"
+    }
+  ]
+} 

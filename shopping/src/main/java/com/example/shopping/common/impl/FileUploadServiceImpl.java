@@ -3,8 +3,8 @@ package com.example.shopping.common.impl;
 import com.example.shopping.common.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
@@ -23,17 +23,46 @@ import java.util.UUID;
  */
 @Component
 @Slf4j
+@ConfigurationProperties(prefix = "app", ignoreUnknownFields = true)
 public class FileUploadServiceImpl implements FileUploadService, ApplicationListener<ApplicationReadyEvent> {
 
     // アップロードディレクトリのパス（設定ファイルから取得）
-    @Value("${app.upload.dir}")
-    private String uploadDir;
+    private Upload upload = new Upload();
 
     // 許可する画像形式
     private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
 
     @Autowired
     private Environment environment;
+
+    /**
+     * アップロード設定クラス
+     */
+    public static class Upload {
+        private String dir;
+
+        public String getDir() {
+            return dir;
+        }
+
+        public void setDir(String dir) {
+            this.dir = dir;
+        }
+    }
+
+    /**
+     * アップロード設定のセッター
+     */
+    public void setUpload(Upload upload) {
+        this.upload = upload;
+    }
+
+    /**
+     * アップロードディレクトリを取得
+     */
+    private String getUploadDir() {
+        return upload != null ? upload.getDir() : null;
+    }
 
     /**
      * アプリケーション起動完了時にアップロードディレクトリを初期化する
@@ -52,7 +81,7 @@ public class FileUploadServiceImpl implements FileUploadService, ApplicationList
         String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "dev";
 
         log.info("Spring Boot Environment から取得したアクティブプロファイル: {}", activeProfile);
-        log.info("設定ファイルから取得したアップロードディレクトリ: {}", uploadDir);
+        log.info("設定ファイルから取得したアップロードディレクトリ: {}", getUploadDir());
     }
 
     /**
@@ -75,7 +104,7 @@ public class FileUploadServiceImpl implements FileUploadService, ApplicationList
         }
 
         // アップロードディレクトリの作成
-        Path uploadPath = Paths.get(uploadDir);
+        Path uploadPath = Paths.get(getUploadDir());
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -109,7 +138,7 @@ public class FileUploadServiceImpl implements FileUploadService, ApplicationList
         try {
             // /images/product-images/ファイル名 の形式から実際のファイルパスを取得
             String fileName = imagePath.replace("/images/product-images/", "");
-            Path filePath = Paths.get(uploadDir, fileName);
+            Path filePath = Paths.get(getUploadDir(), fileName);
 
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
