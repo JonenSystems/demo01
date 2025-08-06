@@ -101,70 +101,63 @@
     <!-- トースト通知 -->
     <div id="toast" class="toast" style="display: none;"></div>
 
+    <!-- JavaScript -->
     <script>
-        // 商品画像のエラーハンドリング
+        // カート追加機能（Ajax + トースト通知）
         document.addEventListener('DOMContentLoaded', function() {
-            const productImages = document.querySelectorAll('.product-image[src]');
-            productImages.forEach(function(img) {
-                img.addEventListener('error', function() {
-                    // 画像読み込みエラー時、画像を非表示にしてプレースホルダーを表示
-                    this.style.display = 'none';
-                    const placeholder = this.nextElementSibling;
-                    if (placeholder && placeholder.classList.contains('no-image-placeholder')) {
-                        placeholder.style.display = 'flex';
-                    }
-                });
-                
-                img.addEventListener('load', function() {
-                    // 画像読み込み成功時、プレースホルダーを非表示
-                    const placeholder = this.nextElementSibling;
-                    if (placeholder && placeholder.classList.contains('no-image-placeholder')) {
-                        placeholder.style.display = 'none';
-                    }
-                });
-            });
-        });
-
-        // カート追加時のトースト通知
-        document.querySelectorAll('.add-to-cart-form').forEach(function(form) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const productName = this.querySelector('.add-to-cart-btn').getAttribute('data-product-name');
-                
-                fetch('/cart/add', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showToast('商品をカートに追加しました: ' + productName, 'success');
-                        // カートアイテム数を更新
-                        const cartCount = document.querySelector('.nav-links a[href="/cart"] span');
-                        if (cartCount) {
-                            const currentCount = parseInt(cartCount.textContent.replace(/[()]/g, '')) || 0;
-                            cartCount.textContent = '(' + (currentCount + 1) + ')';
+            const addToCartForms = document.querySelectorAll('.add-to-cart-form');
+            
+            addToCartForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const productId = formData.get('productId');
+                    const quantity = formData.get('quantity');
+                    const button = form.querySelector('.add-to-cart-btn');
+                    const originalText = button.textContent;
+                    
+                    // ボタンを無効化
+                    button.disabled = true;
+                    button.textContent = '追加中...';
+                    button.classList.add('loading');
+                    
+                    // Ajax送信
+                    fetch('/cart/add', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast('カートに追加しました', 'success');
+                        } else {
+                            showToast('追加に失敗しました', 'error');
                         }
-                    } else {
-                        showToast('カートへの追加に失敗しました', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showToast('エラーが発生しました', 'error');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('追加に失敗しました', 'error');
+                    })
+                    .finally(() => {
+                        // ボタンを元に戻す
+                        button.disabled = false;
+                        button.textContent = originalText;
+                        button.classList.remove('loading');
+                    });
                 });
             });
         });
-
+        
+        // トースト通知表示
         function showToast(message, type) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.className = 'toast toast-' + type;
+            toast.className = `toast toast-${type}`;
             toast.style.display = 'block';
             
-            setTimeout(function() {
+            // 3秒後に自動で消える
+            setTimeout(() => {
                 toast.style.display = 'none';
             }, 3000);
         }
