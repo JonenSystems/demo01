@@ -48,20 +48,21 @@
                 <div th:if="${productListForm.hasProducts()}">
                     <div class="product-grid">
                         <div th:each="product : ${productListForm.products}" class="product-card">
-                            <img th:if="${product.imagePath != null and !product.imagePath.empty}" 
-                                 th:src="${product.imagePath + '?v=' + #temporals.format(product.updatedAt, 'yyyyMMddHHmmss')}" 
-                                 th:alt="${product.name}" 
-                                 class="product-image"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div th:unless="${product.imagePath != null and !product.imagePath.empty}" 
-                                 class="product-image" 
-                                 style="display: flex; align-items: center; justify-content: center; color: #6c757d;">
-                                 No Image
+                            <!-- 商品画像の表示 -->
+                            <div th:if="${product.imagePath != null and !product.imagePath.empty and product.imagePath != ''}">
+                                <img th:src="${product.imagePath}" 
+                                     th:alt="${product.name}" 
+                                     class="product-image"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="product-image no-image-placeholder" 
+                                     style="display: none; align-items: center; justify-content: center; color: #6c757d; background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                                    No Image
+                                </div>
                             </div>
-                            <div th:if="${product.imagePath != null and !product.imagePath.empty}" 
-                                 class="product-image" 
-                                 style="display: none; align-items: center; justify-content: center; color: #6c757d;">
-                                 No Image
+                            <div th:unless="${product.imagePath != null and !product.imagePath.empty and product.imagePath != ''}" 
+                                 class="product-image no-image-placeholder" 
+                                 style="display: flex; align-items: center; justify-content: center; color: #6c757d; background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                                No Image
                             </div>
                             
                             <div class="product-info">
@@ -100,63 +101,70 @@
     <!-- トースト通知 -->
     <div id="toast" class="toast" style="display: none;"></div>
 
-    <!-- JavaScript -->
     <script>
-        // カート追加機能（Ajax + トースト通知）
+        // 商品画像のエラーハンドリング
         document.addEventListener('DOMContentLoaded', function() {
-            const addToCartForms = document.querySelectorAll('.add-to-cart-form');
-            
-            addToCartForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const formData = new FormData(form);
-                    const productId = formData.get('productId');
-                    const quantity = formData.get('quantity');
-                    const button = form.querySelector('.add-to-cart-btn');
-                    const originalText = button.textContent;
-                    
-                    // ボタンを無効化
-                    button.disabled = true;
-                    button.textContent = '追加中...';
-                    button.classList.add('loading');
-                    
-                    // Ajax送信
-                    fetch('/cart/add', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showToast('カートに追加しました', 'success');
-                        } else {
-                            showToast('追加に失敗しました', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showToast('追加に失敗しました', 'error');
-                    })
-                    .finally(() => {
-                        // ボタンを元に戻す
-                        button.disabled = false;
-                        button.textContent = originalText;
-                        button.classList.remove('loading');
-                    });
+            const productImages = document.querySelectorAll('.product-image[src]');
+            productImages.forEach(function(img) {
+                img.addEventListener('error', function() {
+                    // 画像読み込みエラー時、画像を非表示にしてプレースホルダーを表示
+                    this.style.display = 'none';
+                    const placeholder = this.nextElementSibling;
+                    if (placeholder && placeholder.classList.contains('no-image-placeholder')) {
+                        placeholder.style.display = 'flex';
+                    }
+                });
+                
+                img.addEventListener('load', function() {
+                    // 画像読み込み成功時、プレースホルダーを非表示
+                    const placeholder = this.nextElementSibling;
+                    if (placeholder && placeholder.classList.contains('no-image-placeholder')) {
+                        placeholder.style.display = 'none';
+                    }
                 });
             });
         });
-        
-        // トースト通知表示
+
+        // カート追加時のトースト通知
+        document.querySelectorAll('.add-to-cart-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const productName = this.querySelector('.add-to-cart-btn').getAttribute('data-product-name');
+                
+                fetch('/cart/add', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('商品をカートに追加しました: ' + productName, 'success');
+                        // カートアイテム数を更新
+                        const cartCount = document.querySelector('.nav-links a[href="/cart"] span');
+                        if (cartCount) {
+                            const currentCount = parseInt(cartCount.textContent.replace(/[()]/g, '')) || 0;
+                            cartCount.textContent = '(' + (currentCount + 1) + ')';
+                        }
+                    } else {
+                        showToast('カートへの追加に失敗しました', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('エラーが発生しました', 'error');
+                });
+            });
+        });
+
         function showToast(message, type) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.className = `toast toast-${type}`;
+            toast.className = 'toast toast-' + type;
             toast.style.display = 'block';
             
-            // 3秒後に自動で消える
-            setTimeout(() => {
+            setTimeout(function() {
                 toast.style.display = 'none';
             }, 3000);
         }
