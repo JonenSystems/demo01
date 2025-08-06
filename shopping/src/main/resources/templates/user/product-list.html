@@ -53,15 +53,13 @@
                                 <img th:src="${product.imagePath}" 
                                      th:alt="${product.name}" 
                                      class="product-image"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <div class="product-image no-image-placeholder" 
-                                     style="display: none; align-items: center; justify-content: center; color: #6c757d; background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                                     data-has-image="true">
+                                <div class="product-image no-image-placeholder hidden">
                                     No Image
                                 </div>
                             </div>
                             <div th:unless="${product.imagePath != null and !product.imagePath.empty and product.imagePath != ''}" 
-                                 class="product-image no-image-placeholder" 
-                                 style="display: flex; align-items: center; justify-content: center; color: #6c757d; background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                                 class="product-image no-image-placeholder">
                                 No Image
                             </div>
                             
@@ -99,68 +97,9 @@
     </footer>
 
     <!-- トースト通知 -->
-    <div id="toast" class="toast" style="display: none;"></div>
+    <div id="toast" class="toast"></div>
 
     <!-- JavaScript -->
-    <script>
-        // カート追加機能（Ajax + トースト通知）
-        document.addEventListener('DOMContentLoaded', function() {
-            const addToCartForms = document.querySelectorAll('.add-to-cart-form');
-            
-            addToCartForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const formData = new FormData(form);
-                    const productId = formData.get('productId');
-                    const quantity = formData.get('quantity');
-                    const button = form.querySelector('.add-to-cart-btn');
-                    const originalText = button.textContent;
-                    
-                    // ボタンを無効化
-                    button.disabled = true;
-                    button.textContent = '追加中...';
-                    button.classList.add('loading');
-                    
-                    // Ajax送信
-                    fetch('/cart/add', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showToast('カートに追加しました', 'success');
-                        } else {
-                            showToast('追加に失敗しました', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showToast('追加に失敗しました', 'error');
-                    })
-                    .finally(() => {
-                        // ボタンを元に戻す
-                        button.disabled = false;
-                        button.textContent = originalText;
-                        button.classList.remove('loading');
-                    });
-                });
-            });
-        });
-        
-        // トースト通知表示
-        function showToast(message, type) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast toast-${type}`;
-            toast.style.display = 'block';
-            
-            // 3秒後に自動で消える
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-    </script>
+    <script th:src="@{/js/product-list.js}"></script>
 </body>
 </html> 

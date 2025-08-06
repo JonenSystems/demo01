@@ -136,6 +136,10 @@ body {
     font-weight: 500;
 }
 
+.no-image-placeholder.hidden {
+    display: none;
+}
+
 .product-info {
     padding: 1rem;
 }
@@ -720,4 +724,37 @@ body {
 .login-actions {
     text-align: center;
     margin-top: 1rem;
+} 
+
+/* 商品一覧画面用スタイル */
+.no-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.no-image-placeholder.hidden {
+    display: none;
+}
+
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem;
+    border-radius: 4px;
+    color: white;
+    z-index: 1000;
+    display: none;
+}
+
+.toast-success {
+    background-color: #28a745;
+}
+
+.toast-error {
+    background-color: #dc3545;
 } 
