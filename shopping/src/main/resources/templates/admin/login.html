@@ -44,33 +44,6 @@
             margin-bottom: 1.5rem;
         }
         
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #495057;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            box-sizing: border-box;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
         .login-btn {
             width: 100%;
             padding: 0.75rem;
@@ -92,101 +65,44 @@
         .login-btn:active {
             transform: translateY(0);
         }
-        
-        .alert {
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-        
-        .alert-danger {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-        
-        .alert-success {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
-        
-        .back-link {
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-        
-        .back-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        
-        .back-link a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-card">
-            <!-- ログインヘッダー -->
             <div class="login-header">
                 <h1 class="login-title">管理者ログイン</h1>
                 <p class="login-subtitle">管理者権限でログインしてください</p>
             </div>
             
+            <!-- ログアウトメッセージ -->
+            <div th:if="${param.logout}" class="alert alert-success">
+                ログアウトしました。
+            </div>
+            
             <!-- エラーメッセージ -->
-            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">
-                エラーメッセージ
+            <div th:if="${param.error}" class="alert alert-danger">
+                ユーザー名またはパスワードが正しくありません。
             </div>
             
-            <!-- 成功メッセージ -->
-            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
-                成功メッセージ
-            </div>
-            
-            <!-- ログインフォーム -->
-            <form class="login-form" th:action="@{/admin/login}" method="post" th:object="${loginForm}">
-                <!-- CSRFトークン -->
-                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                
-                <!-- ユーザー名 -->
+            <form class="login-form" th:action="@{/admin/login}" method="post">
                 <div class="form-group">
                     <label for="username" class="form-label">ユーザー名</label>
-                    <input type="text" 
-                           id="username" 
-                           name="username" 
-                           class="form-control" 
-                           th:field="*{username}"
-                           placeholder="ユーザー名を入力してください"
-                           required 
-                           autocomplete="username">
+                    <input type="text" id="username" name="username" class="form-control" 
+                           placeholder="ユーザー名を入力してください" required>
                 </div>
                 
-                <!-- パスワード -->
                 <div class="form-group">
                     <label for="password" class="form-label">パスワード</label>
-                    <input type="password" 
-                           id="password" 
-                           name="password" 
-                           class="form-control" 
-                           th:field="*{password}"
-                           placeholder="パスワードを入力してください"
-                           required 
-                           autocomplete="current-password">
+                    <input type="password" id="password" name="password" class="form-control" 
+                           placeholder="パスワードを入力してください" required>
                 </div>
                 
-                <!-- ログインボタン -->
-                <button type="submit" class="login-btn">
-                    ログイン
-                </button>
+                <button type="submit" class="login-btn">ログイン</button>
             </form>
             
-            <!-- 戻るリンク -->
-            <div class="back-link">
-                <a href="/">フロント画面に戻る</a>
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="/" class="btn btn-secondary">フロント画面に戻る</a>
             </div>
         </div>
     </div>
