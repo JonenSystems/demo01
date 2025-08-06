@@ -1,14 +1,12 @@
-package com.example.shopping.common;
+package com.example.shopping.config;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * データベース設定クラス
+ * データベース設定クラス（非推奨 - AppConfigを使用してください）
  */
 @Component
-@ConfigurationProperties(prefix = "app.database", ignoreUnknownFields = true)
 @Data
 public class DatabaseConfig {
 

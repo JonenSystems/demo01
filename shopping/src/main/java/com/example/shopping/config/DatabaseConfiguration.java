@@ -1,12 +1,9 @@
 package com.example.shopping.config;
 
-import com.example.shopping.common.DatabaseConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +20,7 @@ import javax.sql.DataSource;
 public class DatabaseConfiguration {
 
     @Autowired
-    private DatabaseConfig databaseConfig;
+    private AppConfig appConfig;
 
     /**
      * データソースプロパティを設定
@@ -33,12 +30,13 @@ public class DatabaseConfiguration {
     @ConfigurationProperties("app.database")
     public DataSourceProperties dataSourceProperties() {
         DataSourceProperties properties = new DataSourceProperties();
-        properties.setUrl(databaseConfig.getUrl());
-        properties.setDriverClassName(databaseConfig.getDriverClassName());
-        properties.setUsername(databaseConfig.getUsername());
-        properties.setPassword(databaseConfig.getPassword());
+        AppConfig.Database database = appConfig.getDatabase();
+        properties.setUrl(database.getUrl());
+        properties.setDriverClassName(database.getDriverClassName());
+        properties.setUsername(database.getUsername());
+        properties.setPassword(database.getPassword());
 
-        log.info("カスタムデータベース設定を読み込みました: {}", databaseConfig.getUrl());
+        log.info("カスタムデータベース設定を読み込みました: {}", database.getUrl());
         return properties;
     }
 

@@ -1,10 +1,10 @@
 package com.example.shopping.common.impl;
 
 import com.example.shopping.common.FileUploadService;
+import com.example.shopping.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
@@ -23,45 +23,22 @@ import java.util.UUID;
  */
 @Component
 @Slf4j
-@ConfigurationProperties(prefix = "app", ignoreUnknownFields = true)
 public class FileUploadServiceImpl implements FileUploadService, ApplicationListener<ApplicationReadyEvent> {
 
-    // アップロードディレクトリのパス（設定ファイルから取得）
-    private Upload upload = new Upload();
-
-    // 許可する画像形式
-    private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+    @Autowired
+    private AppConfig appConfig;
 
     @Autowired
     private Environment environment;
 
-    /**
-     * アップロード設定クラス
-     */
-    public static class Upload {
-        private String dir;
-
-        public String getDir() {
-            return dir;
-        }
-
-        public void setDir(String dir) {
-            this.dir = dir;
-        }
-    }
-
-    /**
-     * アップロード設定のセッター
-     */
-    public void setUpload(Upload upload) {
-        this.upload = upload;
-    }
+    // 許可する画像形式
+    private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
 
     /**
      * アップロードディレクトリを取得
      */
     private String getUploadDir() {
-        return upload != null ? upload.getDir() : null;
+        return appConfig != null && appConfig.getUpload() != null ? appConfig.getUpload().getDir() : null;
     }
 
     /**
