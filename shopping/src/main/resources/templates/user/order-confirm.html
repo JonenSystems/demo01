@@ -86,8 +86,7 @@
                             <a href="/cart" class="btn btn-secondary">カートに戻る</a>
                             <a th:if="${!orderConfirmForm.hasCustomerInfo()}" href="/order/customer-input" class="btn btn-primary">お客様情報を入力する</a>
                             <form th:if="${orderConfirmForm.hasCustomerInfo()}" th:action="@{/order/confirm}" method="post" style="display: inline;">
-                                <button type="submit" class="btn btn-success" 
-                                        onclick="return confirm('この内容で注文を確定しますか？')">注文を確定する</button>
+                                <button type="submit" class="btn btn-success">注文を確定する</button>
                             </form>
                         </div>
                     </div>
@@ -104,5 +103,8 @@
 
     <!-- フッター -->
     <div th:replace="~{user-layout :: footer}"></div>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/order-confirm.js}"></script>
 </body>
 </html> 

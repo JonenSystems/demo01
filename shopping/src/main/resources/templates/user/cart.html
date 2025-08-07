@@ -39,13 +39,15 @@
                                          th:src="${item.productImagePath}" 
                                          th:alt="${item.productName}" 
                                          style="width: 80px; height: 80px; object-fit: cover;"
-                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                         class="product-image">
                                     <div th:unless="${item.productImagePath != null and !item.productImagePath.empty}" 
-                                         style="width: 80px; height: 80px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;">
+                                         style="width: 80px; height: 80px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;"
+                                         class="no-image-placeholder">
                                         No Image
                                     </div>
                                     <div th:if="${item.productImagePath != null and !item.productImagePath.empty}" 
-                                         style="width: 80px; height: 80px; background-color: #f8f9fa; display: none; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;">
+                                         style="width: 80px; height: 80px; background-color: #f8f9fa; display: none; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;"
+                                         class="no-image-placeholder">
                                         No Image
                                     </div>
                                 </td>
@@ -63,8 +65,7 @@
                                 <td>
                                     <form th:action="@{/cart/remove}" method="post" style="display: inline;">
                                         <input type="hidden" name="productId" th:value="${item.productId}">
-                                        <button type="submit" class="btn btn-danger btn-sm" 
-                                                onclick="return confirm('この商品をカートから削除しますか？')">削除</button>
+                                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
                                     </form>
                                 </td>
                             </tr>
@@ -81,8 +82,7 @@
                         <div>
                             <a href="/" class="btn btn-secondary">買い物を続ける</a>
                             <form th:action="@{/cart/clear}" method="post" style="display: inline;">
-                                <button type="submit" class="btn btn-outline-secondary" 
-                                        onclick="return confirm('カートをクリアしますか？')">カートをクリア</button>
+                                <button type="submit" class="btn btn-outline-secondary">カートをクリア</button>
                             </form>
                         </div>
                         <div>
@@ -101,5 +101,8 @@
 
     <!-- フッター -->
     <div th:replace="~{user-layout :: footer}"></div>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/cart.js}"></script>
 </body>
 </html> 
