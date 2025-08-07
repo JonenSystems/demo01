@@ -63,9 +63,9 @@
                             <div style="margin-top: 5px;">
                                 <img th:src="${productForm.imagePath + '?v=' + #dates.format(#dates.createNow(), 'yyyyMMddHHmmss')}" 
                                      alt="商品画像" 
-                                     style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                <div style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa; display: none; align-items: center; justify-content: center; color: #6c757d; font-size: 0.9rem;">
+                                     style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;">
+                                <div style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa; display: none; align-items: center; justify-content: center; color: #6c757d; font-size: 0.9rem;"
+                                     class="no-image-placeholder">
                                     画像を読み込めませんでした
                                 </div>
                                 <p style="margin-top: 5px; font-size: 0.9em; color: #666;">新しい画像を選択すると、この画像が置き換えられます</p>
@@ -84,5 +84,8 @@
 
     <!-- フッター -->
     <div th:replace="~{admin-layout :: footer}"></div>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/admin/product-form.js}"></script>
 </body>
 </html> 

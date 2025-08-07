@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{admin-layout :: head('商品管理')}">
+<head th:replace="~{admin-layout :: head('商品一覧')}">
     <!-- 追加のhead要素があればここに記述 -->
 </head>
 <body>
@@ -10,38 +10,32 @@
     <!-- メインコンテンツ -->
     <main class="main-content">
         <div class="container">
-            <!-- メッセージ表示 -->
-            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
-            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-            
             <div class="card">
                 <div class="card-header">
-                    <h1 class="card-title">商品管理</h1>
-                    <div style="margin-top: 1rem;">
-                        <a href="/admin/products/new" class="btn btn-primary">新規商品登録</a>
-                        <a href="/admin/products/low-stock" class="btn btn-warning">在庫不足商品</a>
-                    </div>
+                    <h1 class="card-title">商品一覧</h1>
+                    <a href="/admin/products/new" class="btn btn-primary">新規商品登録</a>
                 </div>
                 
                 <!-- 検索フォーム -->
-                <form th:action="@{/admin/products}" method="get" class="search-form" style="margin-bottom: 2rem;">
+                <form th:action="@{/admin/products}" method="get" style="margin-bottom: 2rem;">
                     <div style="display: flex; gap: 1rem; align-items: end;">
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group">
                             <label for="searchName" class="form-label">商品名</label>
                             <input type="text" id="searchName" name="searchName" 
-                                   th:value="${productListForm.searchName}" class="form-control">
+                                   th:value="${productListForm.searchName}" 
+                                   class="form-control" placeholder="商品名で検索">
                         </div>
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group">
                             <label for="searchCategory" class="form-label">カテゴリ</label>
                             <select id="searchCategory" name="searchCategory" class="form-control">
-                                <option value="">全カテゴリ</option>
-                                <option th:each="category : ${productListForm.categories}" 
+                                <option value="">すべてのカテゴリ</option>
+                                <option th:each="category : ${categories}" 
                                         th:value="${category}" 
                                         th:text="${category}"
                                         th:selected="${productListForm.searchCategory == category}"></option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div>
                             <button type="submit" class="btn btn-secondary">検索</button>
                             <a href="/admin/products" class="btn btn-outline-secondary">クリア</a>
                         </div>
@@ -70,14 +64,15 @@
                                     <img th:if="${product.imagePath != null and !product.imagePath.empty}" 
                                          th:src="${product.imagePath + '?v=' + #temporals.format(product.updatedAt, 'yyyyMMddHHmmss') + (cacheBustingTimestamp != null ? '&t=' + cacheBustingTimestamp : '')}" 
                                          th:alt="${product.name}" 
-                                         style="width: 60px; height: 60px; object-fit: cover;"
-                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                         style="width: 60px; height: 60px; object-fit: cover;">
                                     <div th:unless="${product.imagePath != null and !product.imagePath.empty}" 
-                                         style="width: 60px; height: 60px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;">
+                                         style="width: 60px; height: 60px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;"
+                                         class="no-image-placeholder">
                                         No Image
                                     </div>
                                     <div th:if="${product.imagePath != null and !product.imagePath.empty}" 
-                                         style="width: 60px; height: 60px; background-color: #f8f9fa; display: none; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;">
+                                         style="width: 60px; height: 60px; background-color: #f8f9fa; display: none; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8rem;"
+                                         class="no-image-placeholder">
                                         No Image
                                     </div>
                                 </td>
@@ -140,5 +135,8 @@
 
     <!-- フッター -->
     <div th:replace="~{admin-layout :: footer}"></div>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/admin/product-list.js}"></script>
 </body>
 </html> 
