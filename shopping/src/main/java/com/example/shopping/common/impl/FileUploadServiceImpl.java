@@ -25,20 +25,47 @@ import java.util.UUID;
 @Slf4j
 public class FileUploadServiceImpl implements FileUploadService, ApplicationListener<ApplicationReadyEvent> {
 
-    @Autowired
-    private AppConfig appConfig;
-
-    @Autowired
-    private Environment environment;
+    private final AppConfig appConfig;
+    private final Environment environment;
 
     // 許可する画像形式
     private static final String[] ALLOWED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
 
     /**
+     * コンストラクタインジェクション
+     */
+    public FileUploadServiceImpl(AppConfig appConfig, Environment environment) {
+        this.appConfig = appConfig;
+        this.environment = environment;
+    }
+
+    /**
      * アップロードディレクトリを取得
      */
     private String getUploadDir() {
-        return appConfig != null && appConfig.getUpload() != null ? appConfig.getUpload().getDir() : null;
+        String uploadDir = null;
+
+        // AppConfigから設定を読み込み
+        if (appConfig != null && appConfig.getUpload() != null) {
+            uploadDir = appConfig.getUpload().getDir();
+            log.debug("AppConfigから取得したアップロードディレクトリ: {}", uploadDir);
+        }
+
+        // 設定が読み込まれない場合はEnvironmentから直接読み込みを試行
+        if (uploadDir == null || uploadDir.isEmpty()) {
+            uploadDir = environment.getProperty("app.upload.dir");
+            log.debug("Environmentから取得したアップロードディレクトリ: {}", uploadDir);
+        }
+
+        // それでも設定が読み込まれない場合はエラー
+        if (uploadDir == null || uploadDir.isEmpty()) {
+            String errorMsg = "アップロードディレクトリの設定が見つかりません。app.upload.dirプロパティを設定してください。";
+            log.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        }
+
+        log.info("使用するアップロードディレクトリ: {}", uploadDir);
+        return uploadDir;
     }
 
     /**
@@ -58,7 +85,30 @@ public class FileUploadServiceImpl implements FileUploadService, ApplicationList
         String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "dev";
 
         log.info("Spring Boot Environment から取得したアクティブプロファイル: {}", activeProfile);
-        log.info("設定ファイルから取得したアップロードディレクトリ: {}", getUploadDir());
+
+        // AppConfigの設定状況を確認
+        if (appConfig != null) {
+            log.info("AppConfig が正常に注入されました");
+            if (appConfig.getUpload() != null) {
+                log.info("AppConfig.upload.dir: {}", appConfig.getUpload().getDir());
+            } else {
+                log.warn("AppConfig.upload が null です");
+            }
+        } else {
+            log.warn("AppConfig が注入されていません");
+        }
+
+        // Environmentから直接設定を確認
+        String envUploadDir = environment.getProperty("app.upload.dir");
+        log.info("Environment から取得した app.upload.dir: {}", envUploadDir);
+
+        // 最終的なアップロードディレクトリを確認
+        try {
+            String finalUploadDir = getUploadDir();
+            log.info("最終的に使用するアップロードディレクトリ: {}", finalUploadDir);
+        } catch (Exception e) {
+            log.error("アップロードディレクトリの取得に失敗しました: {}", e.getMessage());
+        }
     }
 
     /**
@@ -84,6 +134,7 @@ public class FileUploadServiceImpl implements FileUploadService, ApplicationList
         Path uploadPath = Paths.get(getUploadDir());
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
+            log.info("アップロードディレクトリを作成しました: {}", uploadPath);
         }
 
         // ファイル名の生成（重複を避けるためUUIDを使用）
@@ -95,6 +146,13 @@ public class FileUploadServiceImpl implements FileUploadService, ApplicationList
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         log.info("ファイルがアップロードされました: {}", filePath);
+
+        // ファイルが実際に保存されたかどうかを確認
+        if (Files.exists(filePath)) {
+            log.info("ファイルの保存が確認されました: {} (サイズ: {} bytes)", filePath, Files.size(filePath));
+        } else {
+            log.error("ファイルの保存に失敗しました: {}", filePath);
+        }
 
         // 相対パスを返す（Webからアクセス可能なパス）
         return "/images/product-images/" + fileName;
