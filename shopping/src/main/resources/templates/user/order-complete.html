@@ -1,23 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注文完了 - オンラインショップ</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+<head th:replace="~{user-layout :: head('注文完了')}">
+    <!-- 追加のhead要素があればここに記述 -->
 </head>
 <body>
     <!-- ヘッダー -->
-    <header class="header">
-        <div class="container">
-            <a href="/" class="site-title">オンラインショップ</a>
-            <nav class="nav-links">
-                <a href="/">商品一覧</a>
-                <a href="/cart">カート</a>
-                <a href="/admin">管理者画面</a>
-            </nav>
-        </div>
-    </header>
+    <div th:replace="~{user-layout :: header}"></div>
 
     <!-- メインコンテンツ -->
     <main class="main-content">
@@ -108,10 +96,6 @@
     </main>
 
     <!-- フッター -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 オンラインショップ. All rights reserved.</p>
-        </div>
-    </footer>
+    <div th:replace="~{user-layout :: footer}"></div>
 </body>
 </html> 

@@ -3,3 +3,5 @@ shopping/src/main/resources/templates.zip
 shopping/temp/
 shopping/src/main/resources/static/images/product-images/
 shopping/logs/
+shopping/BOOT-INF/classes/application.properties
+shopping/BOOT-INF/classes/application-dev.properties
