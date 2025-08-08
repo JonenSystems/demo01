@@ -109,6 +109,8 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .product-card:hover {
@@ -141,13 +143,15 @@ body {
 }
 
 .product-info {
-    padding: 1rem;
+    padding-top: 0;
+    padding-bottom: 1rem;
 }
 
 .product-name {
     font-size: 1.1rem;
     font-weight: bold;
     color: #343a40;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }
 
@@ -159,10 +163,12 @@ body {
 }
 
 .product-price {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #28a745;
-    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: #6c757d;
+    vertical-align: top;
+    line-height: 1;
+    margin-bottom: 0;
+    margin-top: 0;
 }
 
 .product-category {
@@ -238,6 +244,14 @@ body {
     transform: none;
 }
 
+.add-to-cart-btn {
+    margin-left: auto;
+    width: 37%;
+    align-self: flex-start;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+}
+
 /* フォーム */
 .form-group {
     margin-bottom: 1rem;
@@ -263,6 +277,13 @@ body {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.add-to-cart-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 1rem;
 }
 
 /* テーブル */

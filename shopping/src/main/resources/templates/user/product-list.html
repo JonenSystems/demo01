@@ -36,6 +36,11 @@
                 <div th:if="${productListForm.hasProducts()}">
                     <div class="product-grid">
                         <div th:each="product : ${productListForm.products}" class="product-card">
+                            
+                            <div class="product-card-header">
+                                <div class="product-category" th:text="${product.category}">カテゴリ</div>
+                            </div>
+                            
                             <!-- 商品画像の表示 -->
                             <div th:if="${product.imagePath != null and !product.imagePath.empty and product.imagePath != ''}">
                                 <img th:src="${product.imagePath}" 
@@ -52,17 +57,16 @@
                             </div>
                             
                             <div class="product-info">
-                                <div class="product-category" th:text="${product.category}">カテゴリ</div>
                                 <h3 class="product-name" th:text="${product.name}">商品名</h3>
                                 <p class="product-description" th:text="${product.description}">商品説明</p>
-                                <div class="product-price" th:text="'¥' + ${#numbers.formatDecimal(product.price ?: 0, 0, 'COMMA', 0, 'POINT')}">価格</div>
                                 
                                 <form th:action="@{/cart/add}" method="post" class="add-to-cart-form">
+                                    <span class="product-price" th:text="'¥' + ${#numbers.formatDecimal(product.price ?: 0, 0, 'COMMA', 0, 'POINT')}">価格</span>
                                     <input type="hidden" name="productId" th:value="${product.id}">
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit" class="btn btn-success add-to-cart-btn" 
                                             th:attr="data-product-id=${product.id}, data-product-name=${product.name}">
-                                        追加
+                                        カートに追加
                                     </button>
                                 </form>
                             </div>
