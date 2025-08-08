@@ -2,4 +2,4 @@
 ショッピングサイト
 
 ## 技術スタック
-- [技術スタック](documents/technologyStacks.md)
+- [技術スタック](documents/technology-stacks.md)
