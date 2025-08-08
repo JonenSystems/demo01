@@ -124,8 +124,9 @@ public class SecurityConfig {
                                 // セキュリティヘッダーの強化
                                 .headers(headers -> headers
                                                 .frameOptions(frame -> frame.deny()) // クリックジャッキング対策
-                                                .contentSecurityPolicy(
-                                                                "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'") // CSP
+                                                .contentSecurityPolicy(csp -> csp
+                                                                .policyDirectives(
+                                                                                "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'")) // CSP
                                 )
 
                                 .build();

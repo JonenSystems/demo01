@@ -3,7 +3,6 @@ package com.example.shopping.common.impl;
 import com.example.shopping.common.FileUploadService;
 import com.example.shopping.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
