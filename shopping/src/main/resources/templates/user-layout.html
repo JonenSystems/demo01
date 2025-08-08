@@ -10,7 +10,9 @@
     <!-- ヘッダー -->
     <header class="header" th:fragment="header">
         <div class="container">
-            <a href="/" class="site-title">オンラインショップ</a>
+            <a href="/" class="site-title">
+                <img src="/images/logos/logo.png" alt="オンラインショップ" class="logo">
+            </a>
             <nav class="nav-links">
                 <a href="/">商品一覧</a>
                 <a href="/cart">カート <span th:if="${cartItemCount > 0}" th:text="'(' + ${cartItemCount} + ')'">(0)</span></a>

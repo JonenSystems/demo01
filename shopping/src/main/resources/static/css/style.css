@@ -38,6 +38,11 @@ body {
     text-decoration: none;
 }
 
+.logo {
+    width: 300px;
+    height: auto;
+}
+
 .nav-links {
     display: flex;
     gap: 1rem;
