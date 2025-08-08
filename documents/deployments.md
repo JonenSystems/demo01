@@ -4,7 +4,10 @@
 ## 環境ごとの方式及び設定の違い
 | 分類名 | 項目名 | 開発環境 | 本番環境 |
 |---|---|---|---|
-| **データベース** | データベース種類 | H2（インメモリ） | MySQL |
+| **サーバリリース** | サーバOS | Windows（ローカル）| Rockey Linux 9 |
+| **サーバリリース** | Java | 17 | 17 |
+| **サーバリリース** | deploy方式 | 手動 | Jenkinsによる自動deploy |
+| **データベース** | データベース種類 | H2（インメモリ） | MySQL 8.0 |
 | **データベース** | ドライバークラス | `org.h2.Driver` | `com.mysql.cj.jdbc.Driver` |
 | **データベース** | プラットフォーム | `org.hibernate.dialect.H2Dialect` | `org.hibernate.dialect.MySQLDialect` |
 | **データベース** | DDL自動生成 | `create-drop` | `validate` |
