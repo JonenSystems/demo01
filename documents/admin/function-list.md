@@ -24,7 +24,7 @@
 |28|顧客管理|[顧客保存](function-specifications/customerSave.md)|AdminCustomerController|customerSave|/admin/customers/save||顧客情報を保存する機能|
 |29|顧客管理|[顧客削除確認](function-specifications/customerDeleteConfirm.md)|AdminCustomerController|customerDeleteConfirm|/admin/customers/{id}/delete|/admin/customers/{id}/delete|顧客削除確認画面を表示する機能|
 |30|顧客管理|[顧客削除](function-specifications/customerDelete.md)|AdminCustomerController|customerDelete|/admin/customers/{id}/delete||顧客を削除する機能|
-|---|---|---|---|---|---|---|                             |
+|---|---|---|---|---|---|---|xxxxxxxxxxxxxxxxxxxxxxx|
 
 
 
