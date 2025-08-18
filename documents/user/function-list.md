@@ -4,7 +4,7 @@
 
 ## 表1. 機能一覧
 
-|ID|中分類（機能分類）|機能名|内容|コントローラ|メソッド|画面入力|画面照会|
+|ID|中分類<br>（機能分類）|機能名|内容|コントローラ|メソッド|画面入力|画面照会|
 |---|---|---|---|---|---|---|---|
 |1|商品表示|[商品一覧表示](function-specifications/productList.md)|商品情報を一覧表示し、カートに追加できる機能|UserProductController|productList|/|/products|
 |2|商品表示|[カテゴリ別商品表示](function-specifications/productListByCategory.md)|指定カテゴリの商品を一覧表示する機能|UserProductController|productListByCategory|/products/category/{category}|/products/category/{category}|
