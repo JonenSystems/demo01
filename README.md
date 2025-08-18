@@ -13,6 +13,6 @@ Spring Bootをベースとした三層アーキテクチャによるWebアプリ
 - [技術スタック](documents/technology-stacks.md)
 - [環境設定およびdeployに関する情報](documents/application-properties.md)
 
-### 実装ルール
+#### 実装ルール
 - [基本的な実装ルール](documents/coding-rules-basic.md)
 - [画面仕様書](documents/ui-specifications.md)
