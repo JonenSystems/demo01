@@ -4,8 +4,8 @@
 
 ## 表1. 機能一覧
 
-|ID|中分類（機能分類）|機能名|コントローラ|メソッド|画面入力|画面照会|abcdefghijklmnopqrstuxyzabcdefghijklmnopqrstuxyzabcdefghijklmnopqrstuxyz|
-|---|---|---|---|---|---|---|---|
+|ID|中分類（機能分類）|機能名|コントローラ|メソッド|画面入力|画面照会|内容|
+|---|---|---|---|---|---|---|--------------------------------|
 |13|認証|[管理者ログイン](function-specifications/showLoginForm.md)|AdminAuthController|showLoginForm|/admin/login|/admin/login|管理者ログイン画面を表示する機能|
 |14|ダッシュボード|[管理者ダッシュボード](function-specifications/dashboard.md)|AdminController|dashboard|/admin|/admin|管理者ダッシュボードを表示する機能|
 |15|商品管理|[商品一覧表示](function-specifications/productList.md)|AdminProductController|productList|/admin/products|/admin/products|管理者用商品一覧を表示する機能|
@@ -24,6 +24,7 @@
 |28|顧客管理|[顧客保存](function-specifications/customerSave.md)|AdminCustomerController|customerSave|/admin/customers/save||顧客情報を保存する機能|
 |29|顧客管理|[顧客削除確認](function-specifications/customerDeleteConfirm.md)|AdminCustomerController|customerDeleteConfirm|/admin/customers/{id}/delete|/admin/customers/{id}/delete|顧客削除確認画面を表示する機能|
 |30|顧客管理|[顧客削除](function-specifications/customerDelete.md)|AdminCustomerController|customerDelete|/admin/customers/{id}/delete||顧客を削除する機能|
+
 
 
 ----
