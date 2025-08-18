@@ -6,8 +6,8 @@ Spring Bootをベースとした三層アーキテクチャによるWebアプリ
 - 管理者機能（要ログイン）：http://133.18.166.208:8080/admin/login
 
 ## 機能一覧、機能詳細説明書
-- [ユーザー機能](user/function-list.md)
-- [管理者機能](admin/function-list.md)
+- [ユーザー機能](documents/user/function-list.md)
+- [管理者機能](documents/admin/function-list.md)
 
 ## 技術情報
 - [技術スタック](documents/technology-stacks.md)
