@@ -4,7 +4,7 @@
 
 ## 表1. 機能一覧
 
-|ID|中分類（機能分類）|機能名|内容|コントローラ|メソッド|画面入力|画面照会|
+|ID|中分類<br>（機能分類）|機能名|内容|コントローラ|メソッド|画面入力|画面照会|
 |---|---|---|---|---|---|---|---|
 |13|認証|[管理者ログイン](function-specifications/showLoginForm.md)|管理者ログイン画面を表示する機能|AdminAuthController|showLoginForm|/admin/login|/admin/login|
 |14|ダッシュボード|[管理者ダッシュボード](function-specifications/dashboard.md)|管理者ダッシュボードを表示する機能|AdminController|dashboard|/admin|/admin|
